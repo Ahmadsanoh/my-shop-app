@@ -1,4 +1,13 @@
-import { bootstrapApplication } from '@angular/platform-browser';
-import { AppComponent } from './dev/app.component';
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
-bootstrapApplication(AppComponent);
+@Component({
+  selector: 'app-root',
+  standalone: true,
+  imports: [RouterOutlet],
+  templateUrl: './app.html',
+  styleUrl: './app.css',
+})
+export class App {
+  protected readonly title = signal('my-shop');
+}
