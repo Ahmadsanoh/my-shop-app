@@ -1,9 +1,56 @@
-.login-container {
-  max-width: 400px;
-  margin: 30px auto;
-  display: block;
+body, html {
+  height: 100%;
+  margin: 0;
+  display: flex;
+  justify-content: center; /* Center horizontally */
+  align-items: center;    /* Center vertically */
+  background-color: #f0f0f0;
+  padding: 20px; /* optional, for side gaps */
 }
 
-.full-width {
+/* Wrapper to contain the login box with side gaps */
+.login-wrapper {
   width: 100%;
+  max-width: 1200px; /* maximum layout width */
+  /* no need for display: flex here, since body is already flex */
+}
+
+/* Main login container with fixed height and shadow */
+.login-container {
+  display: flex;
+  width: 100%;
+  height: 80vh;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  border-radius: 8px;
+  overflow: hidden;
+  background: #fff;
+  margin: auto; /* ensure it stays centered */
+}
+
+/* Both panes should flex equally */
+.left-pane, .right-pane {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Left pane styles */
+.left-pane {
+  flex-direction: column;
+  padding: 40px;
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Right pane styles */
+.right-pane {
+  position: relative;
+  overflow: hidden;
+}
+
+.right-pane img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }

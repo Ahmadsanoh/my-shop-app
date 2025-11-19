@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -21,7 +22,7 @@ import { MatButtonModule } from '@angular/material/button';
 export class LoginPageComponent {
   loginForm: any;
 
-  constructor(private fb: FormBuilder) {
+  constructor(private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
@@ -29,6 +30,13 @@ export class LoginPageComponent {
   }
 
   onSubmit() {
+    const { username, password } = this.loginForm.value;
     console.log("Login form submitted:", this.loginForm.value);
+
+    if (username === 'demo' && password === 'demo') {
+      this.router.navigate(['/home']);
+    } else {
+      alert('Invalid credentials');
+    }
   }
 }

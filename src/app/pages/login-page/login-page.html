@@ -1,20 +1,98 @@
-<div class="login-container">
-  <h2>Login</h2>
+<style>
+  /* Center the entire page content with a gap on the sides */
+  body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f0f0f0; /* optional background */
+    padding: 20px; /* gap around the container */
+  }
 
-  <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+  /* Container with fixed max width and side margins for gaps */
+  .login-wrapper {
+    width: 100%;
+    max-width: 1200px; /* maximum width of the layout */
+    box-sizing: border-box;
+  }
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Username</mat-label>
-      <input matInput formControlName="username">
-    </mat-form-field>
+  /* Style for the login container */
+  .login-container {
+    display: flex;
+    width: 100%;
+    height: 80vh; /* Fixed height for vertical centering */
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border-radius: 8px;
+    overflow: hidden;
+    background: #fff;
+  }
 
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>Password</mat-label>
-      <input matInput type="password" formControlName="password">
-    </mat-form-field>
+  /* Style for the panes inside login container */
+  .left-pane, .right-pane {
+    flex: 1; /* equally divide space */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid">
-      Login
-    </button>
-  </form>
+  /* Left pane styling */
+  .left-pane {
+    flex-direction: column;
+    padding: 40px;
+    max-width: 400px; /* limit form width */
+    width: 100%;
+  }
+
+  /* Make the image fill the right pane completely */
+  .right-pane {
+    position: relative;
+    overflow: hidden; /* ensure image stays within pane bounds */
+  }
+
+  .right-pane img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* cover the entire pane without distortion */
+  }
+
+  /* Ensure form elements take full width */
+  .full-width {
+    width: 100%;
+  }
+</style>
+
+<div class="login-wrapper">
+  <div class="login-container">
+    <div class="left-pane">
+      <h2>Log In</h2>
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" style="width: 100%;">
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput formControlName="username" placeholder="Enter your email" />
+        </mat-form-field>
+        
+        <mat-form-field appearance="fill" class="full-width">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" formControlName="password" placeholder="Enter your password" />
+        </mat-form-field>
+        
+        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid" class="full-width">
+          Log In
+        </button>
+        
+        <div class="social-login" style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
+          <button mat-stroked-button color="primary" class="social-button">Google</button>
+          <button mat-stroked-button color="primary" class="social-button">Facebook</button>
+        </div>
+        
+        <div class="signup-link" style="margin-top: 10px; text-align: center;">
+          Don't have an account? <a href="#">Sign Up</a>
+        </div>
+      </form>
+    </div>
+    <div class="right-pane">
+      <img src="https://plus.unsplash.com/premium_photo-1683141052679-942eb9e77760?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c2hvcHBpbmd8ZW58MHx8MHx8fDA%3D&fm=jpg&q=60&w=3000" alt="Shopping" />
+    </div>
+  </div>
 </div>
