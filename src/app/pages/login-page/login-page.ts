@@ -33,7 +33,7 @@ export class LoginPageComponent {
     const { username, password } = this.loginForm.value;
     console.log("Login form submitted:", this.loginForm.value);
 
-    if (username === 'demo' && password === 'demo') {
+    if (username === 'username' && password === 'sanoh') {
       this.router.navigate(['/home']);
     } else {
       alert('Invalid credentials');

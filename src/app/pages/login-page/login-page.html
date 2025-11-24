@@ -1,98 +1,154 @@
-<style>
-  /* Center the entire page content with a gap on the sides */
-  body, html {
-    height: 100%;
-    margin: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #f0f0f0; /* optional background */
-    padding: 20px; /* gap around the container */
-  }
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login Page</title>
+  <style>
+    /* Make the entire body and html match the home background and center content */
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Roboto', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+      color: #f0f0f0;
+    }
 
-  /* Container with fixed max width and side margins for gaps */
-  .login-wrapper {
-    width: 100%;
-    max-width: 1200px; /* maximum width of the layout */
-    box-sizing: border-box;
-  }
+    /* Wrapper for the login form, centers it with max width */
+    .login-wrapper {
+      width: 100%;
+      max-width: 1000px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
 
-  /* Style for the login container */
-  .login-container {
-    display: flex;
-    width: 100%;
-    height: 80vh; /* Fixed height for vertical centering */
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    border-radius: 8px;
-    overflow: hidden;
-    background: #fff;
-  }
+    /* Main container with semi-transparent background and blur effect for modern look */
+    .login-container {
+      display: flex;
+      width: 100%;
+      height: 70vh;
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(255, 255, 255, 0.8); /* semi-transparent white overlay */
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+      backdrop-filter: blur(4px);
+    }
 
-  /* Style for the panes inside login container */
-  .left-pane, .right-pane {
-    flex: 1; /* equally divide space */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
+    /* Left pane styling */
+    .left-pane {
+      flex: 1;
+      padding: 50px 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background-color: transparent;
+    }
 
-  /* Left pane styling */
-  .left-pane {
-    flex-direction: column;
-    padding: 40px;
-    max-width: 400px; /* limit form width */
-    width: 100%;
-  }
+    /* Heading styling */
+    .left-pane h2 {
+      margin-bottom: 30px;
+      color: #2c3e50;
+      font-size: 2em;
+      text-align: center;
+    }
 
-  /* Make the image fill the right pane completely */
-  .right-pane {
-    position: relative;
-    overflow: hidden; /* ensure image stays within pane bounds */
-  }
+    /* Full width for form fields */
+    mat-form-field {
+      width: 100%;
+      margin-bottom: 20px;
+    }
 
-  .right-pane img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* cover the entire pane without distortion */
-  }
+    /* Style for inputs */
+    input.mat-input-element {
+      color: #000; /* Make input text visible on semi-transparent background */
+    }
 
-  /* Ensure form elements take full width */
-  .full-width {
-    width: 100%;
-  }
-</style>
+    /* Sign Up link styles */
+    .signup-link {
+      margin-top: 15px;
+      text-align: center;
+      font-size: 0.9em;
+      color: #555;
+    }
 
-<div class="login-wrapper">
-  <div class="login-container">
-    <div class="left-pane">
-      <h2>Log In</h2>
-      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" style="width: 100%;">
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Email</mat-label>
-          <input matInput formControlName="username" placeholder="Enter your email" />
-        </mat-form-field>
-        
-        <mat-form-field appearance="fill" class="full-width">
-          <mat-label>Password</mat-label>
-          <input matInput type="password" formControlName="password" placeholder="Enter your password" />
-        </mat-form-field>
-        
-        <button mat-raised-button color="primary" type="submit" [disabled]="loginForm.invalid" class="full-width">
-          Log In
-        </button>
-        
-        <div class="social-login" style="margin-top: 10px; display: flex; gap: 10px; justify-content: center;">
-          <button mat-stroked-button color="primary" class="social-button">Google</button>
-          <button mat-stroked-button color="primary" class="social-button">Facebook</button>
-        </div>
-        
-        <div class="signup-link" style="margin-top: 10px; text-align: center;">
-          Don't have an account? <a href="#">Sign Up</a>
-        </div>
-      </form>
-    </div>
-    <div class="right-pane">
-      <img src="https://plus.unsplash.com/premium_photo-1683141052679-942eb9e77760?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c2hvcHBpbmd8ZW58MHx8MHx8fDA%3D&fm=jpg&q=60&w=3000" alt="Shopping" />
+    .signup-link a {
+      color: #4da1ff;
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    /* Social login buttons container */
+    .social-login {
+      margin-top: 15px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    /* Style for social buttons */
+    button.mat-stroked-button {
+      flex: 1;
+    }
+
+    /* Right pane styling for image */
+    .right-pane {
+      flex: 1;
+      display: none; /* hidden on small screens */
+    }
+
+    .right-pane img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.85;
+    }
+
+    /* Responsive: show right pane on screens wider than 768px */
+    @media (min-width: 768px) {
+      .right-pane {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-container">
+      <div class="left-pane">
+        <h2>Welcome Back</h2>
+        <!-- Form with Angular bindings -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+          <mat-form-field appearance="fill">
+            <mat-label>Username</mat-label>
+            <input matInput placeholder="Enter your username" formControlName="username" />
+          </mat-form-field>
+
+          <mat-form-field appearance="fill">
+            <mat-label>Password</mat-label>
+            <input matInput type="password" placeholder="Enter your password" formControlName="password" />
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" class="full-width">
+            Log In
+          </button>
+
+          <div class="social-login">
+            <button mat-stroked-button color="primary" class="social-btn">Google</button>
+            <button mat-stroked-button color="primary" class="social-btn">Facebook</button>
+          </div>
+
+          <div class="signup-link">
+            Don't have an account? <a href="#">Sign Up</a>
+          </div>
+        </form>
+      </div>
+      <div class="right-pane">
+        <img src="https://plus.unsplash.com/premium_photo-1683141052679-942eb9e77760?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8c2hvcHBpbmd8ZW58MHx8MHx8fDA%3D&fm=jpg&q=60&w=3000" alt="Shopping"/>
+      </div>
     </div>
   </div>
-</div>
+</body>
+</html>
