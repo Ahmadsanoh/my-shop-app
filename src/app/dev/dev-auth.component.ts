@@ -1,6 +1,10 @@
 import { Component, signal } from '@angular/core';
-import { JsonPipe } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatChipsModule } from '@angular/material/chips';
 
 interface TokenResponse {
   access: string;
@@ -13,80 +17,165 @@ interface RefreshResponse {
 @Component({
   standalone: true,
   selector: 'app-dev-auth',
-  imports: [JsonPipe, RouterLink],
+  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, MatProgressSpinnerModule, MatChipsModule],
   template: `
-    <section class="mx-auto max-w-3xl px-4 py-10">
-      <nav class="mb-4 flex gap-3 text-sm">
-        <button type="button" routerLink="/dev" class="text-blue-600 hover:underline">
-          ← Dev index
-        </button>
-        <button type="button" routerLink="/" class="text-blue-600 hover:underline">Accueil</button>
-      </nav>
+<section class="dev-section mx-auto max-w-3xl px-4 py-10 space-y-6">
+  <h2 class="dev-title">/api/auth/token/ & /api/auth/token/refresh/</h2>
 
-      <h2 class="text-2xl font-semibold">/api/auth/token/ & /api/auth/token/refresh/</h2>
-      <div class="mt-4 flex gap-3">
-        <button
-          class="rounded-lg bg-blue-600 px-3 py-2 text-white hover:bg-blue-700"
-          (click)="login()"
-        >
-          POST token
-        </button>
-        <button
-          class="rounded-lg bg-emerald-600 px-3 py-2 text-white hover:bg-emerald-700"
-          (click)="refresh()"
-        >
-          POST refresh
-        </button>
-      </div>
+  <!-- Buttons -->
+  <div class="flex gap-3">
+    <button mat-flat-button color="primary" (click)="login()">POST token</button>
+    <button mat-flat-button color="accent" (click)="refresh()">POST refresh</button>
+  </div>
 
-      @if (loginResp(); as r) {
-        <h3 class="mt-4 font-medium">Login response</h3>
-        <pre class="rounded bg-gray-50 p-3 text-sm">{{ r | json }}</pre>
-      }
-      @if (refreshResp(); as rr) {
-        <h3 class="mt-4 font-medium">Refresh response</h3>
-        <pre class="rounded bg-gray-50 p-3 text-sm">{{ rr | json }}</pre>
-      }
-      @if (err()) {
-        <p class="mt-2 text-sm text-red-600">{{ err() }}</p>
-      }
-    </section>
+  <!-- Loading Spinner -->
+  <div class="loading-container" *ngIf="loading()">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <!-- Error -->
+  <p *ngIf="err()" class="error">{{ err() }}</p>
+
+  <!-- Logged-in State -->
+  <div *ngIf="isLoggedIn()" class="logged-in">
+    <mat-chip color="primary" selected>
+      Access: {{ maskToken(token()?.access) }}
+    </mat-chip>
+    <mat-chip color="accent" selected>
+      Refresh: {{ maskToken(token()?.refresh) }}
+    </mat-chip>
+  </div>
+
+  <!-- Back Buttons -->
+  <div class="back-container">
+    <button routerLink="/dev" class="back-btn">← Dev index</button>
+    <button routerLink="/" class="back-btn">← Home</button>
+  </div>
+</section>
   `,
+  styles: [`
+.dev-section {
+  background: rgba(255,255,255,0.85);
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+  backdrop-filter: blur(4px);
+  font-family: 'Arial', sans-serif;
+}
+
+.dev-title {
+  font-size: 2em;
+  color: #2c3e50;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.flex {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.logged-in {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.back-container {
+  margin-top: 15px;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+}
+
+.back-btn {
+  background-color: transparent;
+  border: none;
+  color: #2c3e50;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.back-btn:hover { color: #34495e; }
+
+.error {
+  color: #e74c3c;
+  font-weight: 600;
+  text-align: center;
+}
+  `]
 })
 export class DevAuthComponent {
-  readonly loginResp = signal<TokenResponse | null>(null);
-  readonly refreshResp = signal<RefreshResponse | null>(null);
+  readonly token = signal<TokenResponse | null>(null);
   readonly err = signal<string | null>(null);
+  readonly loading = signal(false);
+
+  isLoggedIn(): boolean {
+    return !!this.token();
+  }
+
+  maskToken(token?: string): string {
+    if (!token) return '';
+    return token.length > 8 ? `****${token.slice(-4)}` : token;
+  }
 
   async login(): Promise<void> {
     this.err.set(null);
-    this.loginResp.set(null);
-    const res = await fetch('/api/auth/token/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ username: 'demo', password: 'demo' }),
-    });
-    if (!res.ok) {
-      this.err.set(`${res.status} ${res.statusText}`);
-      return;
+    this.token.set(null);
+    this.loading.set(true);
+
+    try {
+      const res = await fetch('/api/auth/token/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: 'username', password: 'sanoh' }),
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const data = await res.json() as TokenResponse;
+
+      // store tokens
+      localStorage.setItem('access', data.access);
+      localStorage.setItem('refresh', data.refresh);
+
+      this.token.set(data);
+    } catch (err: any) {
+      this.err.set(err.message || 'Failed to login.');
+    } finally {
+      this.loading.set(false);
     }
-    const data = (await res.json()) as TokenResponse;
-    this.loginResp.set(data);
   }
 
   async refresh(): Promise<void> {
     this.err.set(null);
-    this.refreshResp.set(null);
-    const res = await fetch('/api/auth/token/refresh/', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ refresh: 'mock-refresh-token' }),
-    });
-    if (!res.ok) {
-      this.err.set(`${res.status} ${res.statusText}`);
-      return;
+    this.loading.set(true);
+
+    try {
+      const refreshToken = localStorage.getItem('refresh') || 'mock-refresh-token';
+      const res = await fetch('/api/auth/token/refresh/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh: refreshToken }),
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      const data = await res.json() as RefreshResponse;
+
+      // update token
+      const current = this.token() || { access: '', refresh: refreshToken };
+      const newToken = { ...current, access: data.access };
+      localStorage.setItem('access', data.access);
+      this.token.set(newToken);
+    } catch (err: any) {
+      this.err.set(err.message || 'Failed to refresh.');
+    } finally {
+      this.loading.set(false);
     }
-    const data = (await res.json()) as RefreshResponse;
-    this.refreshResp.set(data);
   }
 }

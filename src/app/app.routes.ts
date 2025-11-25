@@ -1,3 +1,4 @@
+import { ProductsPageComponent } from './pages/login-page/products-page.component';
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home.component';
 import { DevIndexComponent } from './dev/dev-index.component';
@@ -13,7 +14,9 @@ export const routes: Routes = [
   { path: 'dev', component: DevIndexComponent },
   { path: 'dev/auth', component: DevAuthComponent },
   { path: 'dev/products', component: DevProductsComponent },
+  { path: 'dev/product-rating', component: DevProductRatingComponent },
   { path: 'dev/products/:id/rating', component: DevProductRatingComponent },
+  { path: 'products', component: ProductsPageComponent }, 
   { path: 'app', component: AppPlaceholderComponent },
   { path: '**', redirectTo: '' }
 ];
