@@ -10,9 +10,11 @@ import { DevProductsOrderComponent } from './dev/dev-products.order.component';
 import { AppPlaceholderComponent } from './app-placeholder.component';
 import { LoginPageComponent } from './pages/login-page/login-page';
 import { ProductsPageComponent } from './pages/login-page/products-page.component';
+import { SignupPageComponent } from './signup/signup-page';
 
 export const routes: Routes = [
-  { path: '', component: LoginPageComponent, pathMatch: 'full' },
+  { path: '', component: LoginPageComponent, pathMatch: 'full' }, 
+  { path: 'signup', component: SignupPageComponent },             
   { path: 'home', component: HomeComponent },
   { path: 'dev', component: DevIndexComponent },
   { path: 'dev/auth', component: DevAuthComponent },

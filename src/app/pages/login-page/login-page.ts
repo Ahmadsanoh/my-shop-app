@@ -4,7 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { Router } from '@angular/router';
+import { RouterModule, Router } from '@angular/router';
 
 @Component({
   selector: 'app-login-page',
@@ -14,12 +14,14 @@ import { Router } from '@angular/router';
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
-    MatButtonModule
+    MatButtonModule,
+    RouterModule 
   ],
   templateUrl: './login-page.html',
   styleUrls: ['./login-page.css']
 })
 export class LoginPageComponent {
+
   loginForm: any;
 
   constructor(private fb: FormBuilder, private router: Router) {
@@ -30,13 +32,22 @@ export class LoginPageComponent {
   }
 
   onSubmit() {
-    const { username, password } = this.loginForm.value;
-    console.log("Login form submitted:", this.loginForm.value);
+    if (this.loginForm.invalid) return;
 
-    if (username === 'username' && password === 'sanoh') {
+    const enteredUsername = this.loginForm.value.username;
+    const enteredPassword = this.loginForm.value.password;
+
+    // Read user from localStorage
+    const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+    if (
+      savedUser.username === enteredUsername &&
+      savedUser.password === enteredPassword
+    ) {
+      alert('Login successful!');
       this.router.navigate(['/home']);
     } else {
-      alert('Invalid credentials');
+      alert('Invalid username or password');
     }
   }
 }

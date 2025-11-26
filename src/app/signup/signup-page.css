@@ -9,7 +9,7 @@
 }
 
 /* Wrapper */
-.login-wrapper {
+.signup-wrapper {
   width: 100%;
   max-width: 1000px;
   padding: 20px;
@@ -17,82 +17,72 @@
 }
 
 /* Container */
-.login-container {
+.signup-container {
   display: flex;
   width: 100%;
   height: 70vh;
   border-radius: 12px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.8);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
   backdrop-filter: blur(4px);
 }
 
-/* Left */
+/* Left Pane */
 .left-pane {
   flex: 1;
-  padding: 50px 30px;
+  padding: 30px 25px;   /* reduced for more space on top */
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start; /* changed from center */
 }
 
 .left-pane h2 {
-  margin-bottom: 30px;
+  margin-top: 5px;
+  margin-bottom: 18px; /* reduced spacing */
   color: #2c3e50;
   font-size: 2em;
   text-align: center;
+  font-weight: 700;
 }
 
-/* Form */
+/* Form Fields */
 mat-form-field {
   width: 100%;
-  margin-bottom: 20px;
+  margin-bottom: 12px; /* reduced spacing between inputs */
 }
 
 input.mat-input-element {
   color: #000;
 }
 
-/* Submit button width */
+/* Submit Button */
 .full-width {
   width: 100%;
+  margin-top: 3px; /* spacing above button */
 }
 
-/* Social buttons */
-.social-login {
-  margin-top: 15px;
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-}
-
-button.social-btn {
-  flex: 1;
-}
-
-/* Signup link & button */
-.signup-link {
-  margin-top: 15px;
+/* Error message */
+.error-msg {
+  color: red;
   text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  font-size: 0.9em;
+  margin-top: 8px;
 }
 
-.signup-link span {
-  color: #555;
+/* Login link */
+.login-text {
+  margin-top: 16px;
+  font-size: 0.95rem;
+  text-align: center;
 }
 
-.signup-btn {
-  text-transform: none;
+.login-text a {
   color: #4da1ff;
-  border-color: #4da1ff;
+  text-decoration: none;
+  font-weight: 500;
 }
 
-/* Right pane */
+/* Right Pane */
 .right-pane {
   flex: 1;
   display: none;

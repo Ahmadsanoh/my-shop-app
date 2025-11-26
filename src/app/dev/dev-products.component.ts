@@ -161,7 +161,7 @@ export class ProductDetailsDialog {
   styles: [`
 :host { display: block; min-height: 100vh; background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); padding: 40px 20px; }
 .dev-section { background: rgba(255,255,255,0.85); border-radius: 12px; padding: 30px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
-.dev-title { font-size: 2em; text-align: center; margin-bottom: 20px; color: #2c3e50; }
+.dev-title { font-size: 1em; text-align: center; margin-bottom: 20px; color: #2c3e50; }
 .cart-button { display: flex; gap: 12px; justify-content: center; }
 .order-btn { background-color: #845EC2; color: white; }
 .order-btn:hover { background-color: #6A4FB6; transform: translateY(-2px); }

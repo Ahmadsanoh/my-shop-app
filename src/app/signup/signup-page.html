@@ -1,0 +1,44 @@
+<div class="signup-wrapper">
+  <div class="signup-container">
+    <div class="left-pane">
+      <h2>Create Account</h2>
+
+      <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+
+        <mat-form-field appearance="fill">
+          <mat-label>Username</mat-label>
+          <input matInput placeholder="Enter your username" formControlName="username">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Email</mat-label>
+          <input matInput type="email" placeholder="Enter your email" formControlName="email">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Password</mat-label>
+          <input matInput type="password" placeholder="Enter password" formControlName="password">
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Confirm Password</mat-label>
+          <input matInput type="password" placeholder="Confirm password" formControlName="confirmPassword">
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" class="full-width">Sign Up</button>
+
+        <div *ngIf="signupForm.errors?.passwordsMismatch" class="error-msg">
+          Passwords do not match
+        </div>
+
+        <p class="login-text">
+          Already have an account? <a routerLink="/">Log in</a>
+        </p>
+      </form>
+    </div>
+
+    <div class="right-pane">
+      <img src="https://img.freepik.com/premium-photo/happy-young-asian-woman-using-mobile-phone-online-shopping-blue-color-background_41418-4046.jpg" alt="Shopping">
+    </div>
+  </div>
+</div>
