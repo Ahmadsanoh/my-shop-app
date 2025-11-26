@@ -1,4 +1,16 @@
-<br>
-<h1 class="title">{{ title }}</h1>
-<br>
+<div class="app-header">
+  <h1 class="title">{{ title }}</h1>
+
+  <!-- Show logout only if logged in -->
+  <button
+    *ngIf="isLoggedIn()"
+    mat-raised-button
+    color="warn"
+    class="logout-btn"
+    (click)="logout()"
+  >
+    Logout
+  </button>
+</div>
+
 <router-outlet></router-outlet>

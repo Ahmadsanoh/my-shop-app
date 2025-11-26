@@ -5,35 +5,65 @@
 
       <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
 
+        <!-- Username -->
         <mat-form-field appearance="fill">
           <mat-label>Username</mat-label>
           <input matInput placeholder="Enter your username" formControlName="username">
         </mat-form-field>
 
+        <!-- Email -->
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
           <input matInput type="email" placeholder="Enter your email" formControlName="email">
         </mat-form-field>
 
+        <!-- Password -->
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
-          <input matInput type="password" placeholder="Enter password" formControlName="password">
+          <input matInput 
+                 [type]="hidePassword ? 'password' : 'text'" 
+                 placeholder="Enter password" 
+                 formControlName="password">
+
+          <button mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </mat-form-field>
 
+        <!-- Confirm Password -->
         <mat-form-field appearance="fill">
           <mat-label>Confirm Password</mat-label>
-          <input matInput type="password" placeholder="Confirm password" formControlName="confirmPassword">
+          <input matInput 
+                 [type]="hideConfirmPassword ? 'password' : 'text'" 
+                 placeholder="Confirm password" 
+                 formControlName="confirmPassword">
+
+          <button mat-icon-button
+                  matSuffix
+                  type="button"
+                  (click)="hideConfirmPassword = !hideConfirmPassword">
+            <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </mat-form-field>
 
-        <button mat-raised-button color="primary" class="full-width">Sign Up</button>
+        <!-- Sign Up Button -->
+        <button mat-raised-button color="primary" class="full-width">
+          Sign Up
+        </button>
 
+        <!-- Error -->
         <div *ngIf="signupForm.errors?.passwordsMismatch" class="error-msg">
           Passwords do not match
         </div>
 
+        <!-- Login Link -->
         <p class="login-text">
           Already have an account? <a routerLink="/">Log in</a>
         </p>
+
       </form>
     </div>
 

@@ -7,8 +7,13 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
   template: `
     <section class="home-section mx-auto max-w-3xl px-4 py-10 space-y-6">
-      <h1 class="title">Bienvenue sur My Shop</h1>
-      <p class="subtitle">Choisis une zone :</p>
+      <!-- Logout Button (Top Right) -->
+      <div class="logout-container">
+        <button class="logout-btn" routerLink="/">Logout</button>
+      </div>
+
+      <h1 class="title">Welcome to My Shop</h1>
+      <p class="subtitle">Choose a zone :</p>
 
       <div class="buttons-container">
         <button
@@ -18,6 +23,7 @@ import { RouterLink } from '@angular/router';
         >
           Zone de test MSW
         </button>
+
         <button
           type="button"
           routerLink="/app"
@@ -30,7 +36,6 @@ import { RouterLink } from '@angular/router';
   `,
   styles: [
     `
-      /* Add a beautiful background to the entire component */
       :host {
         display: block;
         min-height: 100vh;
@@ -46,16 +51,38 @@ import { RouterLink } from '@angular/router';
         font-family: 'Arial', sans-serif;
       }
 
-      /* Style for the section container */
       .home-section {
         background: rgba(255, 255, 255, 0.8);
         border-radius: 12px;
         padding: 30px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
         backdrop-filter: blur(4px);
+        position: relative;
       }
 
-      /* Title styling */
+      /* LOGOUT BUTTON */
+      .logout-container {
+        display: flex;
+        justify-content: flex-end;
+      }
+
+      .logout-btn {
+        background-color: #e74c3c;
+        color: #fff;
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9em;
+        cursor: pointer;
+        border: none;
+        transition: background-color 0.3s ease, transform 0.2s ease;
+      }
+
+      .logout-btn:hover {
+        background-color: #c0392b;
+        transform: translateY(-2px);
+      }
+
       .title {
         font-size: 2.5em;
         color: #2c3e50;
@@ -63,7 +90,6 @@ import { RouterLink } from '@angular/router';
         margin-bottom: 10px;
       }
 
-      /* Subtitle styling */
       .subtitle {
         text-align: center;
         font-size: 1.2em;
@@ -71,7 +97,6 @@ import { RouterLink } from '@angular/router';
         margin-bottom: 20px;
       }
 
-      /* Buttons container */
       .buttons-container {
         display: flex;
         flex-wrap: wrap;
@@ -79,7 +104,6 @@ import { RouterLink } from '@angular/router';
         gap: 15px;
       }
 
-      /* Button styles */
       .btn {
         padding: 14px 24px;
         border-radius: 8px;
@@ -91,7 +115,7 @@ import { RouterLink } from '@angular/router';
       }
 
       .test-zone {
-        background-color: #ffb347; /* Amber */
+        background-color: #ffb347;
         color: #fff;
       }
 
@@ -101,7 +125,7 @@ import { RouterLink } from '@angular/router';
       }
 
       .app-zone {
-        background-color: #4CAF50; /* Green */
+        background-color: #4CAF50;
         color: #fff;
       }
 

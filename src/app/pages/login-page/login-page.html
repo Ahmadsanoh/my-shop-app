@@ -1,35 +1,48 @@
 <div class="login-wrapper">
   <div class="login-container">
-    <!-- Left Pane: Login Form -->
+
+    <!-- Left Pane -->
     <div class="left-pane">
       <h2>Welcome Back</h2>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
 
-        <!-- Username Field -->
+        <!-- Username -->
         <mat-form-field appearance="fill">
           <mat-label>Username</mat-label>
           <input matInput placeholder="Enter your username" formControlName="username" />
         </mat-form-field>
 
-        <!-- Password Field -->
+        <!-- Password -->
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
-          <input matInput type="password" placeholder="Enter your password" formControlName="password" />
+          <input 
+            matInput 
+            [type]="hidePassword ? 'password' : 'text'"
+            placeholder="Enter your password" 
+            formControlName="password" 
+          />
+
+          <button mat-icon-button 
+                  matSuffix 
+                  type="button" 
+                  (click)="hidePassword = !hidePassword">
+            <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </button>
         </mat-form-field>
 
-        <!-- Login Button -->
+        <!-- Login -->
         <button mat-raised-button color="primary" type="submit" class="full-width">
           Log In
         </button>
 
-        <!-- Social Login Buttons -->
+        <!-- Social login -->
         <div class="social-login">
           <button mat-stroked-button color="primary" class="social-btn">Google</button>
           <button mat-stroked-button color="primary" class="social-btn">Facebook</button>
         </div>
 
-        <!-- Sign Up Button -->
+        <!-- Sign Up -->
         <div class="signup-link">
           <span>Don't have an account?</span>
           <button mat-stroked-button color="primary" class="signup-btn" routerLink="/signup">
@@ -40,9 +53,13 @@
       </form>
     </div>
 
-    <!-- Right Pane: Image -->
+    <!-- Right Pane -->
     <div class="right-pane">
-      <img src="https://img.freepik.com/premium-photo/happy-young-asian-woman-using-mobile-phone-online-shopping-blue-color-background_41418-4046.jpg" alt="Shopping"/>
+      <img 
+        src="https://img.freepik.com/premium-photo/happy-young-asian-woman-using-mobile-phone-online-shopping-blue-color-background_41418-4046.jpg" 
+        alt="Shopping"
+      />
     </div>
+
   </div>
 </div>

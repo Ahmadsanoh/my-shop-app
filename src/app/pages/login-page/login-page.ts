@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Router } from '@angular/router';
 
 @Component({
@@ -15,12 +16,15 @@ import { RouterModule, Router } from '@angular/router';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
-    RouterModule 
+    MatIconModule,
+    RouterModule
   ],
   templateUrl: './login-page.html',
   styleUrls: ['./login-page.css']
 })
 export class LoginPageComponent {
+
+  hidePassword = true;
 
   loginForm: any;
 
@@ -32,18 +36,10 @@ export class LoginPageComponent {
   }
 
   onSubmit() {
-    if (this.loginForm.invalid) return;
-
-    const enteredUsername = this.loginForm.value.username;
-    const enteredPassword = this.loginForm.value.password;
-
-    // Read user from localStorage
+    const { username, password } = this.loginForm.value;
     const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
 
-    if (
-      savedUser.username === enteredUsername &&
-      savedUser.password === enteredPassword
-    ) {
+    if (savedUser.username === username && savedUser.password === password) {
       alert('Login successful!');
       this.router.navigate(['/home']);
     } else {

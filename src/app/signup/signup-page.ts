@@ -4,6 +4,7 @@ import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, Validati
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { RouterModule, Router } from '@angular/router';
 
 @Component({
@@ -15,12 +16,16 @@ import { RouterModule, Router } from '@angular/router';
     MatFormFieldModule,
     MatInputModule,
     MatButtonModule,
+    MatIconModule,
     RouterModule
   ],
   templateUrl: './signup-page.html',
   styleUrls: ['./signup-page.css']
 })
 export class SignupPageComponent {
+
+  hidePassword = true;
+  hideConfirmPassword = true;
 
   signupForm: any;
 
@@ -33,7 +38,6 @@ export class SignupPageComponent {
     }, { validators: this.passwordMatchValidator });
   }
 
-  // Confirm password validator
   passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
     const password = group.get('password')?.value;
     const confirmPassword = group.get('confirmPassword')?.value;
@@ -46,7 +50,6 @@ export class SignupPageComponent {
       return;
     }
 
-    // Save user to localStorage
     const newUser = {
       username: this.signupForm.value.username,
       email: this.signupForm.value.email,
@@ -54,11 +57,7 @@ export class SignupPageComponent {
     };
 
     localStorage.setItem('user', JSON.stringify(newUser));
-
-    alert('Account created successfully! You can now log in.');
-
-    // Redirect to login page
+    alert('Account created successfully!');
     this.router.navigate(['/']);
   }
-
 }
