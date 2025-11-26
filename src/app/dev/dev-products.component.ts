@@ -1,4 +1,4 @@
-import { Component, signal, computed } from '@angular/core';
+import { Component, signal, computed, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -8,13 +8,15 @@ import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 
+import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
+
 interface Product {
   id: number;
   name: string;
   price: number;
   created_at: string;
   rating?: number;
-  image?: string; // <-- added image property
+  image?: string;
 }
 
 interface Paginated<T> {
@@ -23,6 +25,53 @@ interface Paginated<T> {
   previous: string | null;
   results: T[];
 }
+
+
+@Component({
+  selector: 'product-details-dialog',
+  standalone: true,
+  imports: [CommonModule, MatCardModule, MatButtonModule],
+  template: `
+    <mat-card class="dialog-card">
+      <img *ngIf="data.image" [src]="data.image" class="dialog-image" />
+
+      <h2>{{ data.name }}</h2>
+      <p><strong>Price:</strong> €{{ data.price }}</p>
+      <p><strong>Created:</strong> {{ data.created_at }}</p>
+      <p><strong>Rating:</strong> ⭐ {{ data.rating || 0 }}</p>
+
+      <p class="desc">
+        This is a demo product description.
+        You can customize this later with real backend data.
+      </p>
+
+      <button mat-flat-button color="primary" (click)="close()">Close</button>
+    </mat-card>
+  `,
+  styles: [`
+    .dialog-card { padding: 20px; border-radius: 12px; }
+    .dialog-image {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .desc { margin-top: 15px; color: #333; }
+  `]
+})
+export class ProductDetailsDialog {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: Product,
+    private dialog: MatDialog
+  ) {}
+
+  close() {
+    this.dialog.closeAll();
+  }
+}
+
+
 
 @Component({
   standalone: true,
@@ -35,7 +84,8 @@ interface Paginated<T> {
     MatButtonModule,
     MatProgressSpinnerModule,
     MatFormFieldModule,
-    MatInputModule
+    MatInputModule,
+    MatDialogModule          
   ],
   template: `
 <section class="dev-section mx-auto px-4 py-10 space-y-6">
@@ -78,7 +128,6 @@ interface Paginated<T> {
   <div *ngIf="resp()" class="products-grid">
     <div class="product-card" *ngFor="let p of resp()?.results">
       <mat-card class="product-card-inner">
-        <!-- Product image -->
         <img *ngIf="p.image" [src]="p.image" alt="{{p.name}}" class="product-image">
 
         <mat-card-title>{{ p.name }}</mat-card-title>
@@ -86,20 +135,20 @@ interface Paginated<T> {
           <p>Price: €{{ p.price }}</p>
           <p>Created: {{ p.created_at }}</p>
 
-          <!-- Rating -->
           <p class="stars">
             <ng-container *ngFor="let star of [1,2,3,4,5]; let i = index">
-              <span [class.filled]="isStarFilled(i, p.rating || 0)">&#9733;</span>
-              <span [class.empty]="!isStarFilled(i, p.rating || 0)">&#9734;</span>
+              <span [class.filled]="isStarFilled(i, p.rating || 0)">★</span>
+              <span [class.empty]="!isStarFilled(i, p.rating || 0)">☆</span>
             </ng-container>
             <span class="rating-number">({{ p.rating || 0 | number:'1.1-1' }})</span>
           </p>
 
-          <!-- Actions -->
           <div class="actions">
-            <button mat-flat-button class="btn view-btn" [routerLink]="['/products', p.id]">
+            
+            <button mat-flat-button class="btn view-btn" (click)="openDetails(p)">
               View Details
             </button>
+
             <button mat-flat-button class="btn add-btn" (click)="addToCart(p)">
               Add to Cart
             </button>
@@ -116,117 +165,43 @@ interface Paginated<T> {
 </section>
   `,
   styles: [`
-/* Background and container style */
+
 :host {
   display: block;
   min-height: 100vh;
   background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
-  background-repeat: no-repeat;
-  background-size: cover;
   padding: 40px 20px;
-  box-sizing: border-box;
-  font-family: 'Arial', sans-serif;
 }
-
 .dev-section {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(255,255,255,0.85);
   border-radius: 12px;
   padding: 30px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-  backdrop-filter: blur(4px);
-  max-width: 1200px;
-  margin: auto;
 }
-
 .dev-title {
   font-size: 2em;
   color: #2c3e50;
   text-align: center;
   margin-bottom: 20px;
 }
-
-/* Cart button and filters */
-.cart-button {
-  text-align: right;
-  margin-bottom: 20px;
-}
-.filters-row {
-  display: flex;
-  gap: 20px;
-  align-items: flex-end;
-  margin-bottom: 20px;
-}
-
-/* Buttons */
-.btn {
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-size: 1em;
-  cursor: pointer;
-  transition: background-color 0.3s, transform 0.2s;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  color: #fff;
-  border: none;
-}
-.cart-btn, .apply-btn {
-  background-color: #ffb347;
-}
-.cart-btn:hover, .apply-btn:hover {
-  background-color: #ff8f00;
-  transform: translateY(-2px);
-}
-.view-btn {
-  background-color: #4CAF50;
-}
-.view-btn:hover {
-  background-color: #388E3C;
-  transform: translateY(-2px);
-}
-.add-btn {
-  background-color: #2196F3;
-}
-.add-btn:hover {
-  background-color: #1976D2;
-  transform: translateY(-2px);
-}
-.back-btn {
-  background-color: #666;
-}
-.back-btn:hover {
-  background-color: #444;
-  transform: translateY(-2px);
-}
-
-/* Products grid */
 .products-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 20px;
 }
-.product-card-inner {
-  height: 100%;
-}
-
-/* Product image */
 .product-image {
   width: 100%;
   height: 200px;
   object-fit: cover;
   border-radius: 8px;
-  margin-bottom: 10px;
 }
-
-/* Rating stars */
 .filled { color: #FFD700; }
 .empty { color: #ccc; }
-
-/* Back container */
-.back-container {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
-}
+.btn { padding: 12px 24px; border-radius: 8px; color: #fff; }
+.view-btn { background-color: #4CAF50; }
+.add-btn { background-color: #2196F3; }
+.apply-btn, .cart-btn { background-color: #ffb347; }
+.back-btn { background-color: #666; }
   `]
 })
 export class DevProductsComponent {
@@ -240,12 +215,22 @@ export class DevProductsComponent {
   minRating = 0;
   ordering: '-created_at' | 'created_at' = '-created_at';
 
+  constructor(private dialog: MatDialog) { 
+    this.load();
+  }
+
+  openDetails(product: Product) {
+    this.dialog.open(ProductDetailsDialog, {
+      data: product,
+      width: '450px'
+    });
+  }
+
   isStarFilled(index: number, rating: number): boolean {
     return index < Math.round(rating);
   }
 
   addToCart(product: Product) {
-    // Add product to cart
     const updatedCart = [...this.cart(), product];
     this.cart.set(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
@@ -260,9 +245,8 @@ export class DevProductsComponent {
     try {
       const res = await fetch(`/api/products/?page_size=1000&min_rating=${this.minRating}&ordering=${this.ordering}`);
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      const data = (await res.json()) as Paginated<Product>;
+      const data = await res.json() as Paginated<Product>;
 
-      // Fetch rating for each product
       await Promise.all(
         data.results.map(async (p) => {
           try {
@@ -274,7 +258,6 @@ export class DevProductsComponent {
             p.rating = 0;
           }
 
-          // Example: assign placeholder image if none exists
           if (!p.image) {
             p.image = `https://picsum.photos/400/200?random=${p.id}`;
           }
@@ -282,18 +265,14 @@ export class DevProductsComponent {
       );
 
       this.resp.set(data);
-    } catch (err: any) {
-      this.err.set(err.message || 'Failed to load products.');
+    } catch (error: any) {
+      this.err.set(error.message || 'Failed to load products.');
     } finally {
       this.loading.set(false);
     }
   }
 
   applyFilters() {
-    this.load();
-  }
-
-  constructor() {
     this.load();
   }
 }

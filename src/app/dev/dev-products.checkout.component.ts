@@ -1,8 +1,9 @@
 import { Component, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { FormsModule } from '@angular/forms';
 
 interface Product {
   id: number;
@@ -15,7 +16,7 @@ interface Product {
 @Component({
   standalone: true,
   selector: 'app-dev-checkout',
-  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule],
+  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, FormsModule],
   template: `
 <section class="checkout-section mx-auto px-4 py-10">
   <h2 class="checkout-title">💳 Checkout</h2>
@@ -39,25 +40,46 @@ interface Product {
       </mat-card-content>
     </mat-card>
 
-    <!-- Payment Section -->
+    <!-- Customer & Payment Section -->
     <mat-card class="payment-card">
-      <mat-card-title>Payment Information</mat-card-title>
+      <mat-card-title>Customer Information</mat-card-title>
       <mat-card-content>
 
+        <!-- Email -->
+        <label>Email</label>
+        <input class="input" [(ngModel)]="email" placeholder="example@email.com">
+
+        <!-- Address -->
+        <label>Street Address</label>
+        <input class="input" [(ngModel)]="street" placeholder="123 Main Street">
+
+        <label>City</label>
+        <input class="input" [(ngModel)]="city" placeholder="Paris">
+
+        <label>Postal Code</label>
+        <input class="input" [(ngModel)]="postal" placeholder="75000">
+
+        <label>Country</label>
+        <input class="input" [(ngModel)]="country" placeholder="France">
+
+        <hr class="divider">
+
+        <mat-card-title>Payment Information</mat-card-title>
+
         <label>Name on Card</label>
-        <input class="input" placeholder="John Doe" />
+        <input class="input" [(ngModel)]="cardName" placeholder="John Doe" />
 
         <label>Card Number</label>
-        <input class="input" placeholder="1234 5678 9012 3456" />
+        <input class="input" [(ngModel)]="cardNumber" placeholder="1234 5678 9012 3456" />
 
         <div class="row">
           <div>
             <label>Expiry</label>
-            <input class="input" placeholder="MM/YY" />
+            <input class="input" [(ngModel)]="expiry" placeholder="MM/YY" />
           </div>
           <div>
             <label>CVC</label>
-            <input class="input" placeholder="123" />
+            <input class="input" [(ngModel)]="cvc" placeholder="123" />
           </div>
         </div>
 
@@ -79,6 +101,7 @@ interface Product {
 </section>
   `,
   styles: [`
+/* — SAME STYLES AS BEFORE — */
 :host {
   display: block;
   min-height: 100vh;
@@ -130,14 +153,13 @@ interface Product {
   border-radius: 8px;
 }
 
-.product-name {
-  font-weight: bold;
-}
+.product-name { font-weight: bold; }
 
 .total {
   margin-top: 15px;
   text-align: right;
   color: #2c3e50;
+  font-size: 1.4em;
 }
 
 .input {
@@ -146,6 +168,12 @@ interface Product {
   margin: 6px 0 14px;
   border-radius: 6px;
   border: 1px solid #bbb;
+}
+
+.divider {
+  margin: 20px 0;
+  border: none;
+  border-top: 1px solid #ddd;
 }
 
 .row {
@@ -168,34 +196,35 @@ interface Product {
   width: 100%;
   background-color: #2ecc71;
 }
-.pay-btn:hover {
-  background-color: #27ae60;
-}
+.pay-btn:hover { background-color: #27ae60; }
 
-.browse-btn {
-  background: #ffb347;
-}
+.browse-btn { background: #ffb347; }
 
 .back-container {
   margin-top: 25px;
   text-align: center;
 }
-.back-btn {
-  background: #666;
-}
-.back-btn:hover {
-  background: #444;
-}
+.back-btn { background: #666; }
+.back-btn:hover { background: #444; }
 
-.empty {
-  text-align: center;
-}
+.empty { text-align: center; }
   `]
 })
 export class DevCheckoutComponent {
   readonly items = signal<Product[]>([]);
 
-  constructor() {
+  // form fields
+  email = '';
+  street = '';
+  city = '';
+  postal = '';
+  country = '';
+  cardName = '';
+  cardNumber = '';
+  expiry = '';
+  cvc = '';
+
+  constructor(private router: Router) {
     this.load();
   }
 
@@ -208,6 +237,23 @@ export class DevCheckoutComponent {
   }
 
   pay() {
-    alert("Payment successful! (Demo)");
+    // Basic validation
+    if (!this.email || !this.street || !this.city || !this.postal || !this.country) {
+      alert("Please fill all address fields");
+      return;
+    }
+
+    if (!this.cardName || !this.cardNumber || !this.expiry || !this.cvc) {
+      alert("Please fill all payment fields");
+      return;
+    }
+
+    alert("Payment successful! Thank you ❤️");
+
+    // Clear cart
+    localStorage.removeItem("cart");
+
+    // Redirect user
+    this.router.navigate(['/dev/products']);
   }
 }
