@@ -1,8 +1,9 @@
-import { Component, signal } from '@angular/core';
+import { Component, signal, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 interface OrderItem {
   id: number;
@@ -19,10 +20,61 @@ interface Order {
   total: number;
 }
 
+/* ORDER ITEM DETAILS DIALOG */
+@Component({
+  selector: 'order-item-details-dialog',
+  standalone: true,
+  imports: [CommonModule, MatCardModule, MatButtonModule],
+  template: `
+    <mat-card class="dialog-card">
+      <img *ngIf="data.image" [src]="data.image" class="dialog-image" />
+      <h2>{{ data.name }}</h2>
+
+      <!-- Discounted price -->
+      <p>
+        <strong>Price:</strong>
+        <span class="old-price">€{{ data.price }}</span>
+        →
+        <span class="new-price">€{{ discountedPrice(data.price) }}</span>
+        <span class="discount">(10% OFF)</span>
+      </p>
+
+      <p><strong>Quantity:</strong> {{ data.quantity }}</p>
+
+      <p class="desc">This is a demo description for the ordered item.</p>
+
+      <button mat-flat-button color="primary" (click)="close()">Close</button>
+    </mat-card>
+  `,
+  styles: [`
+    .dialog-card { padding: 20px; border-radius: 12px; text-align: center; }
+    .dialog-image { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
+    .old-price { text-decoration: line-through; color: #d9534f; }
+    .new-price { color: #27ae60; font-weight: bold; }
+    .discount { color: #e67e22; margin-left: 4px; }
+    .desc { margin-top: 10px; font-size: 0.9rem; color: #555; }
+  `]
+})
+export class OrderItemDetailsDialog {
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: OrderItem,
+    private dialog: MatDialog
+  ) {}
+
+  discountedPrice(price: number): number {
+    return Math.round(price * 0.9); // 10% OFF
+  }
+
+  close() { this.dialog.closeAll(); }
+}
+
+
+
+/* MAIN ORDERS COMPONENT */
 @Component({
   standalone: true,
   selector: 'app-dev-orders',
-  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule],
+  imports: [CommonModule, RouterLink, MatCardModule, MatButtonModule, MatDialogModule],
   template: `
 <section class="orders-section">
   <h2 class="title">📦 My Orders</h2>
@@ -34,28 +86,52 @@ interface Order {
   <div class="orders-list" *ngIf="orders().length > 0">
     <div class="order-card" *ngFor="let o of orders()">
       <mat-card class="order-card-inner">
+
+        <!-- ORDER HEADER -->
         <div class="order-header">
           <div>
             <strong>Order #{{ o.id }}</strong>
             <span class="order-date">Placed on {{ o.date }}</span>
+            <br>
+
+            <!-- Estimated delivery -->
+            <span class="delivery">
+              Estimated delivery:
+              {{ getDeliveryRange(o.date) }}
+            </span>
           </div>
+
           <div class="order-total">
             Total: <strong>€{{ o.total }}</strong>
           </div>
         </div>
 
+        <!-- ORDER ITEMS -->
         <div class="items">
           <div class="item" *ngFor="let i of o.items">
             <img *ngIf="i.image" [src]="i.image" class="item-img" />
+
             <div class="item-info">
               <p class="item-name">{{ i.name }}</p>
+
+              <!-- Discounted price -->
+              <p>
+                <span class="old-price">€{{ i.price }}</span>
+                →
+                <span class="new-price">€{{ discountedPrice(i.price) }}</span>
+                <span class="discount">(10% OFF)</span>
+              </p>
+
               <p>Qty: {{ i.quantity }}</p>
-              <p>€{{ i.price }}</p>
+
+              <button mat-flat-button color="primary" (click)="viewItemDetails(i)">
+                👁 View Details
+              </button>
             </div>
           </div>
         </div>
 
-        <!-- DELETE BUTTON -->
+        <!-- DELETE ORDER BUTTON -->
         <div class="order-actions">
           <button mat-flat-button class="btn delete-btn" (click)="deleteOrder(o.id)">
             🗑 Delete Order
@@ -85,7 +161,6 @@ interface Order {
   font-size: 2rem;
   margin-bottom: 30px;
   color: #2c3e50;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.2);
 }
 
 .orders-section {
@@ -114,7 +189,7 @@ interface Order {
 .order-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
   margin-bottom: 15px;
   border-bottom: 1px solid #ddd;
   padding-bottom: 10px;
@@ -123,11 +198,12 @@ interface Order {
 .order-date {
   font-size: 0.9rem;
   color: #555;
-  margin-left: 10px;
 }
 
-.items {
-  margin-top: 15px;
+.delivery {
+  font-size: 0.9rem;
+  color: #2c3e50;
+  font-weight: bold;
 }
 
 .item {
@@ -137,11 +213,6 @@ interface Order {
   padding: 10px;
   border-radius: 10px;
   background: rgba(240,240,240,0.7);
-  transition: background 0.2s;
-}
-
-.item:hover {
-  background: rgba(240,240,240,0.9);
 }
 
 .item-img {
@@ -149,19 +220,25 @@ interface Order {
   height: 80px;
   object-fit: cover;
   border-radius: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
 }
 
-.item-info {
-  font-size: 14px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.old-price { 
+  text-decoration: line-through; 
+  color: #d9534f; 
+}
+
+.new-price { 
+  color: #27ae60; 
+  font-weight: bold; 
+}
+
+.discount {
+  color: #e67e22;
+  margin-left: 4px;
 }
 
 .item-name {
   font-weight: bold;
-  margin-bottom: 5px;
 }
 
 .order-actions {
@@ -171,11 +248,6 @@ interface Order {
 
 .delete-btn {
   background-color: #e74c3c;
-  transition: background 0.2s;
-}
-
-.delete-btn:hover {
-  background-color: #c0392b;
 }
 
 .back {
@@ -183,36 +255,40 @@ interface Order {
   text-align: center;
 }
 
-.btn {
-  padding: 12px 24px;
-  border-radius: 8px;
-  color: #fff;
-  font-weight: bold;
-}
-
 .back-btn {
   background-color: #666;
-  transition: background 0.2s;
-}
-
-.back-btn:hover {
-  background-color: #444;
 }
 
 .empty-text {
   text-align: center;
   font-size: 1.2rem;
   margin-top: 60px;
-  color: #333;
 }
   `]
 })
 export class DevProductsOrderComponent {
   readonly orders = signal<Order[]>([]);
 
-  constructor() {
+  constructor(private dialog: MatDialog) {
     const stored = localStorage.getItem("orders");
     this.orders.set(stored ? JSON.parse(stored) : []);
+  }
+
+  discountedPrice(price: number): number {
+    return Math.round(price * 0.9); // 10% OFF
+  }
+
+  /** Delivery date: 3–5 days after order date */
+  getDeliveryRange(orderDate: string): string {
+    const date = new Date(orderDate);
+
+    const d3 = new Date(date);
+    d3.setDate(date.getDate() + 3);
+
+    const d5 = new Date(date);
+    d5.setDate(date.getDate() + 5);
+
+    return `${d3.toDateString()} – ${d5.toDateString()}`;
   }
 
   deleteOrder(orderId: string) {
@@ -221,5 +297,9 @@ export class DevProductsOrderComponent {
     const updatedOrders = this.orders().filter(o => o.id !== orderId);
     this.orders.set(updatedOrders);
     localStorage.setItem("orders", JSON.stringify(updatedOrders));
+  }
+
+  viewItemDetails(item: OrderItem) {
+    this.dialog.open(OrderItemDetailsDialog, { data: item, width: '400px' });
   }
 }

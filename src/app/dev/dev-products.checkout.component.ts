@@ -18,6 +18,8 @@ interface Order {
   date: string;
   items: Product[];
   total: number;
+  discount?: number;
+  delivery?: string;
 }
 
 @Component({
@@ -43,13 +45,28 @@ interface Order {
           </div>
         </div>
 
-        <h3 class="total">Total: €{{ total() }}</h3>
+        <hr>
+
+        <!-- COUPON -->
+        <label>Coupon Code</label>
+        <input class="input" [(ngModel)]="coupon" placeholder="Enter coupon code">
+        <button class="btn apply-btn" (click)="applyCoupon()">Apply</button>
+        <p *ngIf="discount > 0">Discount applied: -€{{ discount.toFixed(2) }}</p>
+
+        <!-- DELIVERY OPTIONS -->
+        <label>Delivery Options</label>
+        <select class="input" [(ngModel)]="deliveryOption">
+          <option value="standard">Standard (€5)</option>
+          <option value="express">Express (€10)</option>
+          <option value="pickup">Store Pickup (€0)</option>
+        </select>
+
+        <h3 class="total">Total: €{{ totalWithDiscount() }}</h3>
       </mat-card-content>
     </mat-card>
 
     <!-- CUSTOMER & PAYMENT -->
     <mat-card class="payment-card">
-
       <mat-card-title>Customer Information</mat-card-title>
       <mat-card-content>
 
@@ -180,11 +197,9 @@ interface Order {
   margin-top: 10px;
   transition: 0.2s;
 }
-.pay-btn {
-  width: 100%;
-  background-color: #2ecc71;
-}
+.pay-btn { width: 100%; background-color: #2ecc71; }
 .pay-btn:hover { background-color: #27ae60; }
+.apply-btn { background: #3498db; width: 100%; margin-bottom: 10px; }
 .browse-btn { background: #ffb347; }
 .back-btn { background: #666; }
 .back-btn:hover { background: #444; }
@@ -205,6 +220,11 @@ export class DevCheckoutComponent {
   expiry = '';
   cvc = '';
 
+  // coupon & delivery
+  coupon = '';
+  discount = 0;
+  deliveryOption: 'standard' | 'express' | 'pickup' = 'standard';
+
   constructor(private router: Router) {
     this.load();
   }
@@ -214,35 +234,50 @@ export class DevCheckoutComponent {
   }
 
   total() {
-    return this.items().reduce((sum, p) => sum + p.price * (p.quantity || 1), 0);
+    let sum = this.items().reduce((acc, p) => acc + p.price * (p.quantity || 1), 0);
+    return sum;
+  }
+
+  totalWithDiscount() {
+    let total = this.total();
+    let deliveryCost = 0;
+    if (this.deliveryOption === 'standard') deliveryCost = 5;
+    else if (this.deliveryOption === 'express') deliveryCost = 10;
+    return total - this.discount + deliveryCost;
+  }
+
+  applyCoupon() {
+    if (this.coupon.trim().toUpperCase() === 'MYSHOP') {
+      this.discount = this.total() * 0.1; // 10% discount
+      alert('Coupon applied! 10% discount.');
+    } else {
+      this.discount = 0;
+      alert('Invalid coupon code.');
+    }
   }
 
   pay() {
-    // validate all fields
     if (!this.email || !this.street || !this.city || !this.postal || !this.country ||
         !this.cardName || !this.cardNumber || !this.expiry || !this.cvc) {
       alert("Please fill all fields.");
       return;
     }
 
-    // save order
     const orders: Order[] = JSON.parse(localStorage.getItem("orders") || "[]");
 
     orders.push({
       id: Date.now().toString(),
       date: new Date().toLocaleString(),
       items: this.items(),
-      total: this.total()
+      total: this.totalWithDiscount(),
+      discount: this.discount,
+      delivery: this.deliveryOption
     });
 
     localStorage.setItem("orders", JSON.stringify(orders));
-
-    // clear cart
     localStorage.removeItem("cart");
 
     alert("Payment successful!");
-
-    // redirect to orders page
     this.router.navigate(['/dev/orders']);
   }
 }
