@@ -16,7 +16,7 @@ interface Product {
   created_at: string;
   rating?: number;
   image?: string;
-  quantity?: number; // Added for input binding
+  quantity?: number;
 }
 
 interface Paginated<T> {
@@ -165,6 +165,7 @@ export class ProductDetailsDialog {
 .empty { color: #ccc; }
 .quantity-field { width: 100px; margin: 10px 0; }
 .actions { display: flex; gap: 10px; }
+.back-container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
   `]
 })
 export class DevProductsComponent {
@@ -179,37 +180,34 @@ export class DevProductsComponent {
   ordering: '-created_at' | 'created_at' = '-created_at';
 
   readonly imageLinks: Record<string, string> = {
-    'Tampon Encreur': 'https://cdn.france-tampon.fr/3849-large_default/tampon-personnalise-shiny-printer-r552-10-lignes-52mm.jpg', 
-    'Marqueur Effaçable': 'https://m.media-amazon.com/images/I/81WJhUbn+KL.jpg', 
-    'Palette Aquarelle': 'https://m.media-amazon.com/images/I/516rLHAitlS._SL500_.jpg', 
-    'Pinceau Fin': 'https://m.media-amazon.com/images/I/61qaBYuyqXL.jpg', 
-    'Feutres Couleur (Pack x10)': 'https://confetticampus.fr/wp-content/uploads/2022/01/stabilo-pen-68-feutres-de-dessin-x10.jpg', 
-    'Stylo Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/0/2/5/0/3/P_2503_1.jpg', 
-    'Ruban Adhésif': 'https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/N/NX6/ruban-adhesif-50-m-resistant-aux-dechirures-noir-ref_NX6936_2.jpg', 
-    'Colle Bâton': 'https://www.consommables.com/20760-thickbox_default/uhu-colle-baton-stic-super-geant-format.jpg', 
-    'Trousse Bleue': 'https://confetticampus.fr/wp-content/uploads/2023/03/Naamloos-5-22-1350x1350.jpg', 
-    'Feuilles A4': 'https://www.printabout.fr/image/product/1126444/33506/400x400/printabout-premium-a4-papier-1-pak-500-vel.jpg?1684496566', 
-    'Bloc Notes': 'https://static.igopromo.com/ish/Images/IGO/490x490/10618000.jpg', 
-    'Feutre Noir': 'https://www.botaniqueeditions.com/4639-large_default/feutre-peinture-uni-noir-px21-08-12-mm.jpg', 
-    'Pochette Plastique': 'https://m.media-amazon.com/images/I/81ysIVHBhyL.jpg', 
-    'Surligneur Jaune': 'https://www.surdiscount.com/86740-large_default/surligneurs-jaune-fluo-pointe-biseautee-scolaire-bureau-4-surligneurs-maped.jpg', 
-    'Gomme Blanche': 'https://m.media-amazon.com/images/I/81bqtSsY2dL.jpg', 
-    'Règle 30cm': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/9/9/9/9/9/3/P_999993356_1.jpg', 
-    'Crayon HB': 'https://m.media-amazon.com/images/I/71cXzQB1LDL._AC_UF1000,1000_QL80_.jpg', 
-    'Classeur Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/5/3/7/6/5/P_53765_1.jpg', 
-    'Cahier A5': 'https://m.media-amazon.com/images/I/71xapAniX0L.jpg', 
-    'Stylo Bleu': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/4/0/5/1/8/4/P_405184361_1.jpg',
-  };
+  'Tampon Encreur': 'https://cdn.france-tampon.fr/3849-large_default/tampon-personnalise-shiny-printer-r552-10-lignes-52mm.jpg', 
+  'Marqueur Effaçable': 'https://m.media-amazon.com/images/I/81WJhUbn+KL.jpg', 
+  'Palette Aquarelle': 'https://m.media-amazon.com/images/I/516rLHAitlS._SL500_.jpg', 
+  'Pinceau Fin': 'https://m.media-amazon.com/images/I/61qaBYuyqXL.jpg', 
+  'Feutres Couleur (Pack x10)': 'https://confetticampus.fr/wp-content/uploads/2022/01/stabilo-pen-68-feutres-de-dessin-x10.jpg', 
+  'Stylo Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/0/2/5/0/3/P_2503_1.jpg', 
+  'Ruban Adhésif': 'https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/N/NX6/ruban-adhesif-50-m-resistant-aux-dechirures-noir-ref_NX6936_2.jpg', 
+  'Colle Bâton': 'https://www.consommables.com/20760-thickbox_default/uhu-colle-baton-stic-super-geant-format.jpg', 
+  'Trousse Bleue': 'https://confetticampus.fr/wp-content/uploads/2023/03/Naamloos-5-22-1350x1350.jpg', 
+  'Feuilles A4': 'https://www.printabout.fr/image/product/1126444/33506/400x400/printabout-premium-a4-papier-1-pak-500-vel.jpg?1684496566', 
+  'Bloc Notes': 'https://static.igopromo.com/ish/Images/IGO/490x490/10618000.jpg', 
+  'Feutre Noir': 'https://www.botaniqueeditions.com/4639-large_default/feutre-peinture-uni-noir-px21-08-12-mm.jpg', 
+  'Pochette Plastique': 'https://m.media-amazon.com/images/I/81ysIVHBhyL.jpg', 
+  'Surligneur Jaune': 'https://www.surdiscount.com/86740-large_default/surligneurs-jaune-fluo-pointe-biseautee-scolaire-bureau-4-surligneurs-maped.jpg', 
+  'Gomme Blanche': 'https://m.media-amazon.com/images/I/81bqtSsY2dL.jpg', 
+  'Règle 30cm': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/9/9/9/9/9/3/P_999993356_1.jpg', 
+  'Crayon HB': 'https://m.media-amazon.com/images/I/71cXzQB1LDL._AC_UF1000,1000_QL80_.jpg', 
+  'Classeur Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/5/3/7/6/5/P_53765_1.jpg', 
+  'Cahier A5': 'https://m.media-amazon.com/images/I/71xapAniX0L.jpg', 
+  'Stylo Bleu': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/4/0/5/1/8/4/P_405184361_1.jpg',
+};
+
 
   constructor(private dialog: MatDialog) { this.load(); }
 
-  openDetails(product: Product) {
-    this.dialog.open(ProductDetailsDialog, { data: product, width: '450px' });
-  }
+  openDetails(product: Product) { this.dialog.open(ProductDetailsDialog, { data: product, width: '450px' }); }
 
-  isStarFilled(index: number, rating: number) {
-    return index < Math.round(rating);
-  }
+  isStarFilled(index: number, rating: number) { return index < Math.round(rating); }
 
   addToCart(product: Product) {
     const quantity = product.quantity && product.quantity > 0 ? product.quantity : 1;
@@ -218,7 +216,7 @@ export class DevProductsComponent {
     this.cart.set(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
     alert(`${product.name} (x${quantity}) added to cart!`);
-    product.quantity = 1; // Reset quantity after adding
+    product.quantity = 1;
   }
 
   async load() {
@@ -235,22 +233,17 @@ export class DevProductsComponent {
       await Promise.all(data.results.map(async p => {
         try {
           const r = await fetch(`/api/products/${p.id}/rating/`);
-          if (r.ok) {
-            const ratingData = await r.json();
-            p.rating = ratingData.avg_rating;
-          }
+          if (r.ok) { const ratingData = await r.json(); p.rating = ratingData.avg_rating; }
         } catch { p.rating = 0; }
 
         if (!p.image) p.image = this.imageLinks[p.name] || `https://picsum.photos/400/200?random=${p.id}`;
-        if (!p.quantity) p.quantity = 1; // Default quantity
+        if (!p.quantity) p.quantity = 1;
       }));
 
       this.resp.set(data);
     } catch (e: any) {
       this.err.set(e.message || 'Failed to load.');
-    } finally {
-      this.loading.set(false);
-    }
+    } finally { this.loading.set(false); }
   }
 
   applyFilters() { this.load(); }
