@@ -49,7 +49,7 @@ interface Product {
 
   <div *ngIf="items().length > 0" class="cart-summary">
     <h3>Total: €{{ total() }}</h3>
-    <button class="btn checkout-btn" (click)="checkout()">Checkout (Not implemented)</button>
+    <button class="btn checkout-btn" routerLink="/dev/checkout">Checkout</button>
   </div>
 
   <div class="back-container">
