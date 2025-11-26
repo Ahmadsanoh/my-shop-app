@@ -7,7 +7,6 @@ import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
-
 import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 interface Product {
@@ -17,6 +16,7 @@ interface Product {
   created_at: string;
   rating?: number;
   image?: string;
+  quantity?: number; // Added for input binding
 }
 
 interface Paginated<T> {
@@ -26,7 +26,7 @@ interface Paginated<T> {
   results: T[];
 }
 
-
+/* PRODUCT DETAILS DIALOG */
 @Component({
   selector: 'product-details-dialog',
   standalone: true,
@@ -34,30 +34,17 @@ interface Paginated<T> {
   template: `
     <mat-card class="dialog-card">
       <img *ngIf="data.image" [src]="data.image" class="dialog-image" />
-
       <h2>{{ data.name }}</h2>
       <p><strong>Price:</strong> €{{ data.price }}</p>
       <p><strong>Created:</strong> {{ data.created_at }}</p>
       <p><strong>Rating:</strong> ⭐ {{ data.rating || 0 }}</p>
-
-      <p class="desc">
-        This is a demo product description.
-        You can customize this later with real backend data.
-      </p>
-
+      <p class="desc">This is a demo product description.</p>
       <button mat-flat-button color="primary" (click)="close()">Close</button>
     </mat-card>
   `,
   styles: [`
     .dialog-card { padding: 20px; border-radius: 12px; }
-    .dialog-image {
-      width: 100%;
-      height: 250px;
-      object-fit: cover;
-      border-radius: 10px;
-      margin-bottom: 15px;
-    }
-    .desc { margin-top: 15px; color: #333; }
+    .dialog-image { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
   `]
 })
 export class ProductDetailsDialog {
@@ -65,14 +52,10 @@ export class ProductDetailsDialog {
     @Inject(MAT_DIALOG_DATA) public data: Product,
     private dialog: MatDialog
   ) {}
-
-  close() {
-    this.dialog.closeAll();
-  }
+  close() { this.dialog.closeAll(); }
 }
 
-
-
+/* MAIN PRODUCTS PAGE */
 @Component({
   standalone: true,
   selector: 'app-dev-products',
@@ -85,20 +68,21 @@ export class ProductDetailsDialog {
     MatProgressSpinnerModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDialogModule          
+    MatDialogModule
   ],
   template: `
 <section class="dev-section mx-auto px-4 py-10 space-y-6">
   <h2 class="dev-title">All Products</h2>
 
-  <!-- Cart button -->
   <div class="cart-button">
     <button mat-flat-button class="btn cart-btn" routerLink="/dev/cart">
       🛒 Cart ({{ cartCount() }})
     </button>
+    <button mat-flat-button class="btn order-btn" routerLink="/dev/orders">
+      📦 My Orders
+    </button>
   </div>
 
-  <!-- Filters row -->
   <form class="filters-row" (submit)="$event.preventDefault(); applyFilters()">
     <mat-form-field appearance="fill">
       <mat-label>Min Rating</mat-label>
@@ -108,26 +92,24 @@ export class ProductDetailsDialog {
     <mat-form-field appearance="fill">
       <mat-label>Ordering</mat-label>
       <select matNativeControl [(ngModel)]="ordering" name="ordering">
-        <option value="-created_at">Newest First</option>
-        <option value="created_at">Oldest First</option>
+        <option value="-created_at">Newest</option>
+        <option value="created_at">Oldest</option>
       </select>
     </mat-form-field>
 
     <button mat-flat-button class="btn apply-btn" type="submit">Apply</button>
   </form>
 
-  <!-- Loader -->
   <div class="loading-container" *ngIf="loading()">
     <mat-spinner></mat-spinner>
   </div>
 
-  <!-- Error -->
   <p *ngIf="err()" class="error">{{ err() }}</p>
 
-  <!-- Products Grid -->
   <div *ngIf="resp()" class="products-grid">
     <div class="product-card" *ngFor="let p of resp()?.results">
       <mat-card class="product-card-inner">
+
         <img *ngIf="p.image" [src]="p.image" alt="{{p.name}}" class="product-image">
 
         <mat-card-title>{{ p.name }}</mat-card-title>
@@ -140,15 +122,16 @@ export class ProductDetailsDialog {
               <span [class.filled]="isStarFilled(i, p.rating || 0)">★</span>
               <span [class.empty]="!isStarFilled(i, p.rating || 0)">☆</span>
             </ng-container>
-            <span class="rating-number">({{ p.rating || 0 | number:'1.1-1' }})</span>
           </p>
 
-          <div class="actions">
-            
-            <button mat-flat-button class="btn view-btn" (click)="openDetails(p)">
-              View Details
-            </button>
+          <!-- QUANTITY INPUT -->
+          <mat-form-field appearance="fill" class="quantity-field">
+            <mat-label>Quantity</mat-label>
+            <input matInput type="number" min="1" [(ngModel)]="p.quantity" name="quantity-{{p.id}}">
+          </mat-form-field>
 
+          <div class="actions">
+            <button mat-flat-button class="btn view-btn" (click)="openDetails(p)">View Details</button>
             <button mat-flat-button class="btn add-btn" (click)="addToCart(p)">
               Add to Cart
             </button>
@@ -165,43 +148,23 @@ export class ProductDetailsDialog {
 </section>
   `,
   styles: [`
-
-:host {
-  display: block;
-  min-height: 100vh;
-  background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
-  padding: 40px 20px;
-}
-.dev-section {
-  background: rgba(255,255,255,0.85);
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.2);
-}
-.dev-title {
-  font-size: 2em;
-  color: #2c3e50;
-  text-align: center;
-  margin-bottom: 20px;
-}
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-}
-.product-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-}
+:host { display: block; min-height: 100vh; background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); padding: 40px 20px; }
+.dev-section { background: rgba(255,255,255,0.85); border-radius: 12px; padding: 30px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
+.dev-title { font-size: 2em; text-align: center; margin-bottom: 20px; color: #2c3e50; }
+.cart-button { display: flex; gap: 12px; justify-content: center; }
+.order-btn { background-color: #845EC2; color: white; }
+.order-btn:hover { background-color: #6A4FB6; transform: translateY(-2px); }
+.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+.product-image { height: 200px; width: 100%; object-fit: cover; border-radius: 8px; }
+.btn { padding: 12px 24px; border-radius: 8px; color: #fff; }
+.view-btn { background: #4CAF50; }
+.add-btn { background: #2196F3; }
+.apply-btn, .cart-btn { background: #ffb347; }
+.back-btn { background: #666; }
 .filled { color: #FFD700; }
 .empty { color: #ccc; }
-.btn { padding: 12px 24px; border-radius: 8px; color: #fff; }
-.view-btn { background-color: #4CAF50; }
-.add-btn { background-color: #2196F3; }
-.apply-btn, .cart-btn { background-color: #ffb347; }
-.back-btn { background-color: #666; }
+.quantity-field { width: 100px; margin: 10px 0; }
+.actions { display: flex; gap: 10px; }
   `]
 })
 export class DevProductsComponent {
@@ -215,64 +178,80 @@ export class DevProductsComponent {
   minRating = 0;
   ordering: '-created_at' | 'created_at' = '-created_at';
 
-  constructor(private dialog: MatDialog) { 
-    this.load();
-  }
+  readonly imageLinks: Record<string, string> = {
+    'Tampon Encreur': 'https://cdn.france-tampon.fr/3849-large_default/tampon-personnalise-shiny-printer-r552-10-lignes-52mm.jpg', 
+    'Marqueur Effaçable': 'https://m.media-amazon.com/images/I/81WJhUbn+KL.jpg', 
+    'Palette Aquarelle': 'https://m.media-amazon.com/images/I/516rLHAitlS._SL500_.jpg', 
+    'Pinceau Fin': 'https://m.media-amazon.com/images/I/61qaBYuyqXL.jpg', 
+    'Feutres Couleur (Pack x10)': 'https://confetticampus.fr/wp-content/uploads/2022/01/stabilo-pen-68-feutres-de-dessin-x10.jpg', 
+    'Stylo Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/0/2/5/0/3/P_2503_1.jpg', 
+    'Ruban Adhésif': 'https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/N/NX6/ruban-adhesif-50-m-resistant-aux-dechirures-noir-ref_NX6936_2.jpg', 
+    'Colle Bâton': 'https://www.consommables.com/20760-thickbox_default/uhu-colle-baton-stic-super-geant-format.jpg', 
+    'Trousse Bleue': 'https://confetticampus.fr/wp-content/uploads/2023/03/Naamloos-5-22-1350x1350.jpg', 
+    'Feuilles A4': 'https://www.printabout.fr/image/product/1126444/33506/400x400/printabout-premium-a4-papier-1-pak-500-vel.jpg?1684496566', 
+    'Bloc Notes': 'https://static.igopromo.com/ish/Images/IGO/490x490/10618000.jpg', 
+    'Feutre Noir': 'https://www.botaniqueeditions.com/4639-large_default/feutre-peinture-uni-noir-px21-08-12-mm.jpg', 
+    'Pochette Plastique': 'https://m.media-amazon.com/images/I/81ysIVHBhyL.jpg', 
+    'Surligneur Jaune': 'https://www.surdiscount.com/86740-large_default/surligneurs-jaune-fluo-pointe-biseautee-scolaire-bureau-4-surligneurs-maped.jpg', 
+    'Gomme Blanche': 'https://m.media-amazon.com/images/I/81bqtSsY2dL.jpg', 
+    'Règle 30cm': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/9/9/9/9/9/3/P_999993356_1.jpg', 
+    'Crayon HB': 'https://m.media-amazon.com/images/I/71cXzQB1LDL._AC_UF1000,1000_QL80_.jpg', 
+    'Classeur Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/5/3/7/6/5/P_53765_1.jpg', 
+    'Cahier A5': 'https://m.media-amazon.com/images/I/71xapAniX0L.jpg', 
+    'Stylo Bleu': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/4/0/5/1/8/4/P_405184361_1.jpg',
+  };
+
+  constructor(private dialog: MatDialog) { this.load(); }
 
   openDetails(product: Product) {
-    this.dialog.open(ProductDetailsDialog, {
-      data: product,
-      width: '450px'
-    });
+    this.dialog.open(ProductDetailsDialog, { data: product, width: '450px' });
   }
 
-  isStarFilled(index: number, rating: number): boolean {
+  isStarFilled(index: number, rating: number) {
     return index < Math.round(rating);
   }
 
   addToCart(product: Product) {
-    const updatedCart = [...this.cart(), product];
+    const quantity = product.quantity && product.quantity > 0 ? product.quantity : 1;
+    const updatedItems = Array(quantity).fill(product);
+    const updatedCart = [...this.cart(), ...updatedItems];
     this.cart.set(updatedCart);
     localStorage.setItem('cart', JSON.stringify(updatedCart));
-    alert(`${product.name} added to cart!`);
+    alert(`${product.name} (x${quantity}) added to cart!`);
+    product.quantity = 1; // Reset quantity after adding
   }
 
-  async load(): Promise<void> {
+  async load() {
     this.err.set(null);
-    this.resp.set(null);
     this.loading.set(true);
+    this.resp.set(null);
 
     try {
       const res = await fetch(`/api/products/?page_size=1000&min_rating=${this.minRating}&ordering=${this.ordering}`);
       if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+
       const data = await res.json() as Paginated<Product>;
 
-      await Promise.all(
-        data.results.map(async (p) => {
-          try {
-            const r = await fetch(`/api/products/${p.id}/rating/`);
-            if (!r.ok) throw new Error();
+      await Promise.all(data.results.map(async p => {
+        try {
+          const r = await fetch(`/api/products/${p.id}/rating/`);
+          if (r.ok) {
             const ratingData = await r.json();
             p.rating = ratingData.avg_rating;
-          } catch {
-            p.rating = 0;
           }
+        } catch { p.rating = 0; }
 
-          if (!p.image) {
-            p.image = `https://picsum.photos/400/200?random=${p.id}`;
-          }
-        })
-      );
+        if (!p.image) p.image = this.imageLinks[p.name] || `https://picsum.photos/400/200?random=${p.id}`;
+        if (!p.quantity) p.quantity = 1; // Default quantity
+      }));
 
       this.resp.set(data);
-    } catch (error: any) {
-      this.err.set(error.message || 'Failed to load products.');
+    } catch (e: any) {
+      this.err.set(e.message || 'Failed to load.');
     } finally {
       this.loading.set(false);
     }
   }
 
-  applyFilters() {
-    this.load();
-  }
+  applyFilters() { this.load(); }
 }

@@ -13,6 +13,13 @@ interface Product {
   image?: string;
 }
 
+interface Order {
+  id: string;
+  date: string;
+  items: Product[];
+  total: number;
+}
+
 @Component({
   standalone: true,
   selector: 'app-dev-checkout',
@@ -23,7 +30,7 @@ interface Product {
 
   <div class="checkout-grid" *ngIf="items().length > 0">
 
-    <!-- Order Summary -->
+    <!-- ORDER SUMMARY -->
     <mat-card class="summary-card">
       <mat-card-title>Order Summary</mat-card-title>
       <mat-card-content>
@@ -40,16 +47,15 @@ interface Product {
       </mat-card-content>
     </mat-card>
 
-    <!-- Customer & Payment Section -->
+    <!-- CUSTOMER & PAYMENT -->
     <mat-card class="payment-card">
+
       <mat-card-title>Customer Information</mat-card-title>
       <mat-card-content>
 
-        <!-- Email -->
         <label>Email</label>
         <input class="input" [(ngModel)]="email" placeholder="example@email.com">
 
-        <!-- Address -->
         <label>Street Address</label>
         <input class="input" [(ngModel)]="street" placeholder="123 Main Street">
 
@@ -64,22 +70,22 @@ interface Product {
 
         <hr class="divider">
 
-        <mat-card-title>Payment Information</mat-card-title>
+        <mat-card-title>Payment Details</mat-card-title>
 
         <label>Name on Card</label>
-        <input class="input" [(ngModel)]="cardName" placeholder="John Doe" />
+        <input class="input" [(ngModel)]="cardName" placeholder="John Doe">
 
         <label>Card Number</label>
-        <input class="input" [(ngModel)]="cardNumber" placeholder="1234 5678 9012 3456" />
+        <input class="input" [(ngModel)]="cardNumber" placeholder="1234 5678 9012 3456">
 
         <div class="row">
           <div>
             <label>Expiry</label>
-            <input class="input" [(ngModel)]="expiry" placeholder="MM/YY" />
+            <input class="input" [(ngModel)]="expiry" placeholder="MM/YY">
           </div>
           <div>
             <label>CVC</label>
-            <input class="input" [(ngModel)]="cvc" placeholder="123" />
+            <input class="input" [(ngModel)]="cvc" placeholder="123">
           </div>
         </div>
 
@@ -90,6 +96,7 @@ interface Product {
 
   </div>
 
+  <!-- EMPTY CART -->
   <div *ngIf="items().length == 0" class="empty">
     <p>Your cart is empty.</p>
     <button routerLink="/dev/products" class="btn browse-btn">Browse Products</button>
@@ -101,16 +108,12 @@ interface Product {
 </section>
   `,
   styles: [`
-/* — SAME STYLES AS BEFORE — */
 :host {
   display: block;
   min-height: 100vh;
   background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
   padding: 40px 20px;
-  box-sizing: border-box;
-  font-family: 'Arial';
 }
-
 .checkout-section {
   background: rgba(255, 255, 255, 0.85);
   border-radius: 12px;
@@ -118,50 +121,39 @@ interface Product {
   max-width: 1100px;
   margin: auto;
 }
-
 .checkout-title {
   text-align: center;
   font-size: 2em;
-  color: #2c3e50;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
 }
-
 .checkout-grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 20px;
 }
 @media (max-width:900px) { .checkout-grid { grid-template-columns: 1fr; } }
-
 .summary-card, .payment-card {
   background: rgba(255, 255, 255, 0.95);
   padding: 20px;
   border-radius: 10px;
 }
-
 .summary-item {
   display: flex;
   gap: 10px;
   margin-bottom: 15px;
-  align-items: center;
 }
-
 .summary-image {
   width: 80px;
   height: 80px;
   object-fit: cover;
   border-radius: 8px;
 }
-
 .product-name { font-weight: bold; }
-
 .total {
-  margin-top: 15px;
   text-align: right;
-  color: #2c3e50;
   font-size: 1.4em;
+  margin-top: 20px;
 }
-
 .input {
   width: 100%;
   padding: 10px;
@@ -169,44 +161,33 @@ interface Product {
   border-radius: 6px;
   border: 1px solid #bbb;
 }
-
 .divider {
   margin: 20px 0;
   border: none;
   border-top: 1px solid #ddd;
 }
-
 .row {
   display: flex;
   gap: 15px;
 }
-
 .btn {
   padding: 10px 18px;
   border-radius: 8px;
-  font-weight: bold;
   color: white;
+  font-weight: bold;
   border: none;
   cursor: pointer;
   margin-top: 10px;
   transition: 0.2s;
 }
-
 .pay-btn {
   width: 100%;
   background-color: #2ecc71;
 }
 .pay-btn:hover { background-color: #27ae60; }
-
 .browse-btn { background: #ffb347; }
-
-.back-container {
-  margin-top: 25px;
-  text-align: center;
-}
 .back-btn { background: #666; }
 .back-btn:hover { background: #444; }
-
 .empty { text-align: center; }
   `]
 })
@@ -233,27 +214,35 @@ export class DevCheckoutComponent {
   }
 
   total() {
-    return this.items().reduce((s, p) => s + p.price * (p.quantity || 1), 0);
+    return this.items().reduce((sum, p) => sum + p.price * (p.quantity || 1), 0);
   }
 
   pay() {
-    // Basic validation
-    if (!this.email || !this.street || !this.city || !this.postal || !this.country) {
-      alert("Please fill all address fields");
+    // validate all fields
+    if (!this.email || !this.street || !this.city || !this.postal || !this.country ||
+        !this.cardName || !this.cardNumber || !this.expiry || !this.cvc) {
+      alert("Please fill all fields.");
       return;
     }
 
-    if (!this.cardName || !this.cardNumber || !this.expiry || !this.cvc) {
-      alert("Please fill all payment fields");
-      return;
-    }
+    // save order
+    const orders: Order[] = JSON.parse(localStorage.getItem("orders") || "[]");
 
-    alert("Payment successful! Thank you ❤️");
+    orders.push({
+      id: Date.now().toString(),
+      date: new Date().toLocaleString(),
+      items: this.items(),
+      total: this.total()
+    });
 
-    // Clear cart
+    localStorage.setItem("orders", JSON.stringify(orders));
+
+    // clear cart
     localStorage.removeItem("cart");
 
-    // Redirect user
-    this.router.navigate(['/dev/products']);
+    alert("Payment successful!");
+
+    // redirect to orders page
+    this.router.navigate(['/dev/orders']);
   }
 }
