@@ -1,4 +1,4 @@
-import { Component, signal, computed, Inject } from '@angular/core';
+import { Component, signal, computed, Inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -35,16 +35,37 @@ interface Paginated<T> {
     <mat-card class="dialog-card">
       <img *ngIf="data.image" [src]="data.image" class="dialog-image" />
       <h2>{{ data.name }}</h2>
+
       <p><strong>Price:</strong> €{{ data.price }}</p>
       <p><strong>Created:</strong> {{ data.created_at }}</p>
       <p><strong>Rating:</strong> ⭐ {{ data.rating || 0 }}</p>
-      <p class="desc">This is a demo product description.</p>
-      <button mat-flat-button color="primary" (click)="close()">Close</button>
+
+      <button mat-flat-button class="close-btn" (click)="close()">Close</button>
     </mat-card>
   `,
   styles: [`
-    .dialog-card { padding: 20px; border-radius: 12px; }
-    .dialog-image { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
+    .dialog-card {
+      padding: 20px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.9);
+      box-shadow: 0 6px 14px rgba(0,0,0,0.2);
+      backdrop-filter: blur(3px);
+    }
+    .dialog-image {
+      width: 100%;
+      height: 250px;
+      object-fit: cover;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+    .close-btn {
+      background-color: #e74c3c;
+      color: #fff;
+      font-weight: 600;
+    }
+    .close-btn:hover {
+      background-color: #c0392b;
+    }
   `]
 })
 export class ProductDetailsDialog {
@@ -55,7 +76,7 @@ export class ProductDetailsDialog {
   close() { this.dialog.closeAll(); }
 }
 
-/* MAIN PRODUCTS PAGE */
+/* MAIN PAGE */
 @Component({
   standalone: true,
   selector: 'app-dev-products',
@@ -72,7 +93,7 @@ export class ProductDetailsDialog {
   ],
   template: `
 <section class="dev-section mx-auto px-4 py-10 space-y-6">
-  <h2 class="dev-title">All Products</h2>
+  <h1 class="dev-title">All Products</h1>
 
   <div class="cart-button">
     <button mat-flat-button class="btn cart-btn" routerLink="/dev/cart">
@@ -117,7 +138,6 @@ export class ProductDetailsDialog {
           <p>Price: €{{ p.price }}</p>
           <p>Created: {{ p.created_at }}</p>
 
-          <!-- STOCK INDICATOR -->
           <p>
             <strong>Stock:</strong>
             <span [ngClass]="getStockClass(p.quantity)">{{ p.quantity }}</span>
@@ -126,11 +146,9 @@ export class ProductDetailsDialog {
           <p class="stars">
             <ng-container *ngFor="let star of [1,2,3,4,5]; let i = index">
               <span [class.filled]="isStarFilled(i, p.rating || 0)">★</span>
-              <span [class.empty]="!isStarFilled(i, p.rating || 0)">☆</span>
             </ng-container>
           </p>
 
-          <!-- QUANTITY INPUT -->
           <mat-form-field appearance="fill" class="quantity-field">
             <mat-label>Quantity</mat-label>
             <input matInput type="number" min="1" [(ngModel)]="p.quantity" name="quantity-{{p.id}}">
@@ -138,8 +156,6 @@ export class ProductDetailsDialog {
 
           <div class="actions">
             <button mat-flat-button class="btn view-btn" (click)="openDetails(p)">View Details</button>
-
-            <!-- Add to Cart or Out of Stock -->
             <button *ngIf="p.quantity && p.quantity > 0" mat-flat-button class="btn add-btn" (click)="addToCart(p)">
               Add to Cart
             </button>
@@ -157,32 +173,139 @@ export class ProductDetailsDialog {
     <button routerLink="/home" class="btn back-btn">← Home</button>
   </div>
 </section>
+
+<!-- Scroll to Top Button OUTSIDE the container -->
+<button *ngIf="showScrollTop" class="scroll-top-btn" (click)="scrollToTop()">
+  ⬆️
+</button>
   `,
   styles: [`
-:host { display: block; min-height: 100vh; background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%); padding: 40px 20px; }
-.dev-section { background: rgba(255,255,255,0.85); border-radius: 12px; padding: 30px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
-.dev-title { font-size: 1em; text-align: center; margin-bottom: 20px; color: #2c3e50; }
-.cart-button { display: flex; gap: 12px; justify-content: center; }
-.order-btn { background-color: #845EC2; color: white; }
-.order-btn:hover { background-color: #6A4FB6; transform: translateY(-2px); }
-.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.product-image { height: 200px; width: 100%; object-fit: cover; border-radius: 8px; }
-.btn { padding: 12px 24px; border-radius: 8px; color: #fff; }
-.view-btn { background: #4CAF50; }
-.add-btn { background: #2196F3; }
-.apply-btn, .cart-btn { background: #ffb347; }
-.back-btn { background: #666; }
-.filled { color: #FFD700; }
-.empty { color: #ccc; }
-.quantity-field { width: 100px; margin: 10px 0; }
-.actions { display: flex; gap: 10px; }
-.back-container { display: flex; justify-content: center; gap: 20px; margin-top: 20px; }
+:host {
+  display: block;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #0e939cff 0%, #66a6ff 100%);
+  padding: 40px 20px;
+}
 
-/* STOCK COLORS */
-.in-stock { color: green; font-weight: bold; }
-.low-stock { color: orange; font-weight: bold; }
-.out-stock { color: red; font-weight: bold; }
-.out-stock-btn { background: #ff4d4d; cursor: not-allowed; }
+.dev-section {
+  max-width: 1100px;
+  background: #ffffffff;
+  border-radius: 12px;
+  padding: 30px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(4px);
+  color: #000;
+}
+
+.dev-title {
+  font-size: 2.2em;
+  color: #000;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.cart-button {
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.filters-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px; 
+  align-items: center;
+  margin-bottom: 20px; 
+}
+
+.btn {
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 600;
+  color: #fff;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.cart-btn, .apply-btn { background-color: #ffb347; }
+.cart-btn:hover, .apply-btn:hover { background-color: #ff8f00; transform: translateY(-2px); }
+
+.order-btn { background-color: #4CAF50; }
+.order-btn:hover { background-color: #388E3C; }
+
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.product-card-inner {
+  padding: 12px;
+  border-radius: 12px;
+  background: #ADD8E6; 
+  box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease;
+}
+.product-card-inner:hover { transform: translateY(-4px); }
+
+.product-image {
+  height: 250px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.filled { color: #FFD700; }
+
+.in-stock { color: #2ecc71; font-weight: bold; }
+.low-stock { color: #f39c12; font-weight: bold; }
+.out-stock { color: #e74c3c; font-weight: bold; }
+.out-stock-btn { background: #e74c3c; }
+
+.actions { display: flex; gap: 10px; }
+
+.view-btn { background-color: #95dd93ff; }
+.view-btn:hover { background-color: #08b52aff; }
+
+.add-btn { background-color: #ffb347; }
+.add-btn:hover { background-color: #ff8f00; transform: translateY(-2px); }
+
+.back-btn { background-color: #666; }
+.back-btn:hover { background-color: #444; }
+
+.back-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.scroll-top-btn {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 80px;            /* bigger size */
+  height: 80px;           /* bigger size */
+  font-size: 2em;         /* bigger arrow */
+  border-radius: 50%;
+  background-color: #388E3C; /* no background */
+  color: #000;            /* black arrow */
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 0.8;
+}
+.scroll-top-btn:hover {
+  transform: translateY(-2px);
+  opacity: 1;
+}
+
   `]
 })
 export class DevProductsComponent {
@@ -196,34 +319,49 @@ export class DevProductsComponent {
   minRating = 0;
   ordering: '-created_at' | 'created_at' = '-created_at';
 
+  showScrollTop = false;
+
   readonly imageLinks: Record<string, string> = {
-    'Tampon Encreur': 'https://cdn.france-tampon.fr/3849-large_default/tampon-personnalise-shiny-printer-r552-10-lignes-52mm.jpg', 
-    'Marqueur Effaçable': 'https://m.media-amazon.com/images/I/81WJhUbn+KL.jpg', 
-    'Palette Aquarelle': 'https://m.media-amazon.com/images/I/516rLHAitlS._SL500_.jpg', 
-    'Pinceau Fin': 'https://m.media-amazon.com/images/I/61qaBYuyqXL.jpg', 
-    'Feutres Couleur (Pack x10)': 'https://confetticampus.fr/wp-content/uploads/2022/01/stabilo-pen-68-feutres-de-dessin-x10.jpg', 
-    'Stylo Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/0/2/5/0/3/P_2503_1.jpg', 
-    'Ruban Adhésif': 'https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/N/NX6/ruban-adhesif-50-m-resistant-aux-dechirures-noir-ref_NX6936_2.jpg', 
-    'Colle Bâton': 'https://www.consommables.com/20760-thickbox_default/uhu-colle-baton-stic-super-geant-format.jpg', 
-    'Trousse Bleue': 'https://confetticampus.fr/wp-content/uploads/2023/03/Naamloos-5-22-1350x1350.jpg', 
-    'Feuilles A4': 'https://www.printabout.fr/image/product/1126444/33506/400x400/printabout-premium-a4-papier-1-pak-500-vel.jpg?1684496566', 
-    'Bloc Notes': 'https://static.igopromo.com/ish/Images/IGO/490x490/10618000.jpg', 
-    'Feutre Noir': 'https://www.botaniqueeditions.com/4639-large_default/feutre-peinture-uni-noir-px21-08-12-mm.jpg', 
-    'Pochette Plastique': 'https://m.media-amazon.com/images/I/81ysIVHBhyL.jpg', 
-    'Surligneur Jaune': 'https://www.surdiscount.com/86740-large_default/surligneurs-jaune-fluo-pointe-biseautee-scolaire-bureau-4-surligneurs-maped.jpg', 
-    'Gomme Blanche': 'https://m.media-amazon.com/images/I/81bqtSsY2dL.jpg', 
-    'Règle 30cm': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/9/9/9/9/9/3/P_999993356_1.jpg', 
-    'Crayon HB': 'https://m.media-amazon.com/images/I/71cXzQB1LDL._AC_UF1000,1000_QL80_.jpg', 
-    'Classeur Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/5/3/7/6/5/P_53765_1.jpg', 
-    'Cahier A5': 'https://m.media-amazon.com/images/I/71xapAniX0L.jpg', 
-    'Stylo Bleu': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/4/0/5/1/8/4/P_405184361_1.jpg',
+    'Tampon Encreur': 'https://cdn.france-tampon.fr/3849-large_default/tampon-personnalise-shiny-printer-r552-10-lignes-52mm.jpg',
+    'Marqueur Effaçable': 'https://m.media-amazon.com/images/I/81WJhUbn+KL.jpg',
+    'Palette Aquarelle': 'https://m.media-amazon.com/images/I/516rLHAitlS._SL500_.jpg',
+    'Pinceau Fin': 'https://m.media-amazon.com/images/I/61qaBYuyqXL.jpg',
+    'Feutres Couleur (Pack x10)': 'https://confetticampus.fr/wp-content/uploads/2022/01/stabilo-pen-68-feutres-de-dessin-x10.jpg',
+    'Stylo Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/0/2/5/0/3/P_2503_1.jpg',
+    'Ruban Adhésif': 'https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/N/NX6/ruban-adhesif-50-m-resistant-aux-dechirures-noir-ref_NX6936_2.jpg',
+    'Colle Bâton': 'https://www.consommables.com/20760-thickbox_default/uhu-colle-baton-stic-super-geant-format.jpg',
+    'Trousse Bleue': 'https://confetticampus.fr/wp-content/uploads/2023/03/Naamloos-5-22-1350x1350.jpg',
+    'Feuilles A4': 'https://www.printabout.fr/image/product/1126444/33506/400x400/printabout-premium-a4-papier-1-pak-500-vel.jpg?1684496566',
+    'Bloc Notes': 'https://static.igopromo.com/ish/Images/IGO/490x490/10618000.jpg',
+    'Feutre Noir': 'https://www.botaniqueeditions.com/4639-large_default/feutre-peinture-uni-noir-px21-08-12-mm.jpg',
+    'Pochette Plastique': 'https://m.media-amazon.com/images/I/81ysIVHBhyL.jpg',
+    'Surligneur Jaune': 'https://www.surdiscount.com/86740-large_default/surligneurs-jaune-fluo-pointe-biseautee-scolaire-bureau-4-surligneurs-maped.jpg',
+    'Gomme Blanche': 'https://m.media-amazon.com/images/I/81bqtSsY2dL.jpg',
+    'Règle 30cm': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/9/9/9/9/9/3/P_999993356_1.jpg',
+    'Crayon HB': 'https://m.media-amazon.com/images/I/71cXzQB1LDL._AC_UF1000,1000_QL80_.jpg',
+    'Classeur Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/5/3/7/6/5/P_53765_1.jpg',
+    'Cahier A5': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/7/9/1/4/4/5/P_79144594_2.jpg',
+    'Stylo Bleu': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/4/0/5/1/8/4/P_405184361_1.jpg'
   };
 
   constructor(private dialog: MatDialog) { this.load(); }
 
-  openDetails(product: Product) { this.dialog.open(ProductDetailsDialog, { data: product, width: '450px' }); }
+  @HostListener('window:scroll', [])
+  onWindowScroll() {
+    this.showScrollTop = window.scrollY > 300;
+  }
 
-  isStarFilled(index: number, rating: number) { return index < Math.round(rating); }
+  scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  openDetails(product: Product) {
+    this.dialog.open(ProductDetailsDialog, { data: product, width: '450px' });
+  }
+
+  isStarFilled(index: number, rating: number) {
+    return index < Math.round(rating);
+  }
 
   getStockClass(quantity: number | undefined) {
     if (!quantity || quantity === 0) return 'out-stock';
@@ -236,7 +374,6 @@ export class DevProductsComponent {
       alert('Product is out of stock!');
       return;
     }
-
     const quantity = product.quantity > 0 ? product.quantity : 1;
     const updatedItems = Array(quantity).fill(product);
     const updatedCart = [...this.cart(), ...updatedItems];
@@ -260,17 +397,24 @@ export class DevProductsComponent {
       await Promise.all(data.results.map(async p => {
         try {
           const r = await fetch(`/api/products/${p.id}/rating/`);
-          if (r.ok) { const ratingData = await r.json(); p.rating = ratingData.avg_rating; }
-        } catch { p.rating = 0; }
+          if (r.ok) {
+            const ratingData = await r.json();
+            p.rating = ratingData.avg_rating;
+          }
+        } catch {
+          p.rating = 0;
+        }
 
         if (!p.image) p.image = this.imageLinks[p.name] || `https://picsum.photos/400/200?random=${p.id}`;
-        if (p.quantity === undefined) p.quantity = Math.floor(Math.random() * 10); // demo stock
+        if (p.quantity === undefined) p.quantity = Math.floor(Math.random() * 10);
       }));
 
       this.resp.set(data);
     } catch (e: any) {
       this.err.set(e.message || 'Failed to load.');
-    } finally { this.loading.set(false); }
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   applyFilters() { this.load(); }

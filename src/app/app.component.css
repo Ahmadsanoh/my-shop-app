@@ -1,21 +1,66 @@
-/* Grey header bar */
+/* Header container */
 .app-header {
-  background-color: #e0e0e0;   /* grey */
-  padding: 15px 20px;
+  background-color: #fff;
+  padding: 10px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-/* Title styling */
-.title {
+/* Logo image */
+.logo-img {
+  height: 40px;
+  width: 80px;
+  object-fit: contain;
+  cursor: pointer; 
+}
+
+/* Search bar */
+.search-bar {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input {
+  width: 100%;
+  max-width: 1000px;
+  height: 36px;
+  padding: 0 15px;
+  border: 2px solid #ccc;
+  border-radius: 25px;
+  font-size: 1rem;
+}
+
+/* User actions container */
+.user-actions {
+  display: flex;
+  align-items: center;
+  gap: 0px;
+  position: relative; 
+}
+
+/* Icons styling */
+.profile-btn mat-icon,
+.cart-btn mat-icon {
+  font-size: 36px;
+  color: #1976d2; /* blue icons */
+}
+
+/* Cart badge */
+.cart-count {
+  position: absolute;
+  top: auto;
+  right: auto;
+  background: #ff5252;
+  color: white;
+  font-size: 0.7rem;
   font-weight: bold;
-  font-size: 1.6rem;
-  margin: 0;
-  color: #3f51b5;
-}
-
-/* Logout button styling */
-.logout-btn {
-  font-weight: 600;
+  border-radius: 50%;
+  width: auto;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

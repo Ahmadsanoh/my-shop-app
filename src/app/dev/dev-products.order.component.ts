@@ -212,7 +212,7 @@ export class OrderItemDetailsDialog {
   margin-bottom: 15px;
   padding: 10px;
   border-radius: 10px;
-  background: rgba(240,240,240,0.7);
+  background: #ADD8E6; 
 }
 
 .item-img {

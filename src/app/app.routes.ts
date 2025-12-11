@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+
 import { HomeComponent } from './home.component';
 import { DevIndexComponent } from './dev/dev-index.component';
 import { DevAuthComponent } from './dev/dev-auth.component';
@@ -11,11 +12,14 @@ import { AppPlaceholderComponent } from './app-placeholder.component';
 import { LoginPageComponent } from './pages/login-page/login-page';
 import { ProductsPageComponent } from './pages/login-page/products-page.component';
 import { SignupPageComponent } from './signup/signup-page';
+import { LandingPageComponent } from './landing-page.component';
 
 export const routes: Routes = [
-  { path: '', component: LoginPageComponent, pathMatch: 'full' }, 
-  { path: 'signup', component: SignupPageComponent },             
+  { path: '', component: LandingPageComponent, pathMatch: 'full' },
+  { path: 'signup', component: SignupPageComponent },
+  { path: 'login', component: LoginPageComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'products', component: ProductsPageComponent },
   { path: 'dev', component: DevIndexComponent },
   { path: 'dev/auth', component: DevAuthComponent },
   { path: 'dev/products', component: DevProductsComponent },
@@ -24,7 +28,9 @@ export const routes: Routes = [
   { path: 'dev/cart', component: DevCartComponent },
   { path: 'dev/checkout', component: DevCheckoutComponent },
   { path: 'dev/orders', component: DevProductsOrderComponent },
-  { path: 'products', component: ProductsPageComponent },
+
   { path: 'app', component: AppPlaceholderComponent },
+
+  // Fallback
   { path: '**', redirectTo: '' }
 ];

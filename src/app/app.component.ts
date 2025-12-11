@@ -1,21 +1,35 @@
 import { Component, signal, computed } from '@angular/core';
-import { RouterOutlet, Router } from '@angular/router';
+import { RouterOutlet, Router, RouterLink } from '@angular/router'; // import RouterLink
+import { FormsModule } from '@angular/forms';
 import { MaterialModule } from './material.module';
+import { MatIconModule } from '@angular/material/icon';
+import { SearchService } from './search.service';
+import { NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, MaterialModule],
+  imports: [
+    RouterOutlet,
+    RouterLink, 
+    MaterialModule,
+    FormsModule,
+    MatIconModule,
+    NgIf
+  ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
   title = 'My Shop';
+  searchQuery = '';
 
-  // store login state using Angular signals
   isLoggedIn = signal<boolean>(false);
 
-  constructor(private router: Router) {
+  cart = signal<any[]>(JSON.parse(localStorage.getItem('cart') || '[]'));
+  cartCount = computed(() => this.cart().length);
+
+  constructor(private router: Router, private searchService: SearchService) {
     this.checkLoginStatus();
   }
 
@@ -24,10 +38,16 @@ export class AppComponent {
     this.isLoggedIn.set(!!token);
   }
 
-  logout() {
-    localStorage.removeItem('access');
-    localStorage.removeItem('refresh');
-    this.isLoggedIn.set(false);
-    this.router.navigate(['/']); 
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
+
+  goToCart() {
+    this.router.navigate(['/dev/cart']);
+  }
+
+  onSearch() {
+    this.searchService.searchQuery.set(this.searchQuery);
+    this.router.navigate(['/dev/products']);
   }
 }

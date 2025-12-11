@@ -1,16 +1,38 @@
-<div class="app-header">
-  <h1 class="title">{{ title }}</h1>
+<header class="app-header">
+  <!-- Logo (clickable, navigates to Home Page) -->
+  <div class="logo flex items-center gap-2">
+    <a routerLink="/home" class="logo-link">
+      <img src="assets/my-shop.png" alt="My Shop Logo" class="logo-img" />
+    </a>
+  </div>
 
-  <!-- Show logout only if logged in -->
-  <button
-    *ngIf="isLoggedIn()"
-    mat-raised-button
-    color="warn"
-    class="logout-btn"
-    (click)="logout()"
-  >
-    Logout
-  </button>
-</div>
+  <!-- Search Bar -->
+  <div class="search-bar flex-1 mx-4">
+    <input
+      type="text"
+      placeholder="Search products..."
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearch()"
+    />
+  </div>
 
+  <!-- User Actions -->
+  <div class="user-actions flex items-center gap-4">
+    <!-- Login/Profile Icon -->
+    <button mat-icon-button (click)="goToLogin()" class="profile-btn">
+      <mat-icon>account_circle</mat-icon>
+    </button>
+
+    <!-- Cart Icon -->
+    <button mat-icon-button (click)="goToCart()" class="cart-btn">
+      <mat-icon>shopping_cart</mat-icon>
+      <span class="cart-count" *ngIf="cartCount() > 0">
+        {{ cartCount() }}
+      </span>
+    </button>
+  </div>
+</header>
+
+<!-- Main Content / Routing -->
 <router-outlet></router-outlet>

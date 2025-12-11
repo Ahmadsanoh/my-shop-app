@@ -11,7 +11,7 @@ interface Product {
   created_at: string;
   rating?: number;
   quantity?: number;
-  image?: string; // <-- added image property
+  image?: string; 
 }
 
 @Component({
@@ -102,7 +102,7 @@ interface Product {
 @media (max-width:640px) { .cart-grid { grid-template-columns: 1fr; } }
 
 .cart-card {
-  background: rgba(255, 255, 255, 0.95);
+  background: #ADD8E6; 
   border-radius: 10px;
   padding: 15px;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
