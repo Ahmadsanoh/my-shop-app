@@ -1,66 +1,148 @@
-/* Header container */
+/* ===== HEADER ===== */
 .app-header {
+  position: fixed; 
+  top: 0;    
+  left: 0;
+  right: 0;
+  z-index: 1000;   
   background-color: #fff;
-  padding: 10px 20px;
+  padding: 20px 30px; /* initial padding */
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  transition: all 0.3s ease;
 }
 
-/* Logo image */
+/* Shrinked header */
+.app-header.shrink {
+  padding: 10px 30px; /* smaller padding */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+}
+
+/* Add a small gap for all page content so header doesn't cover it */
+body > *:not(.app-header) {
+  margin-top: 80px; /* adjust to header height + small gap */
+}
+
+/* Logo */
+.logo {
+  display: flex;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.app-header.shrink .logo {
+  transform: scale(0.85); /* shrink logo */
+}
+
 .logo-img {
-  height: 40px;
-  width: 80px;
+  height: 60px;
+  width: auto;
   object-fit: contain;
-  cursor: pointer; 
+  cursor: pointer;
+  transition: height 0.3s ease;
+}
+
+/* Navigation menu */
+.nav-menu {
+  display: flex;
+  gap: 40px;
+  transition: transform 0.3s ease;
+}
+
+.app-header.shrink .nav-menu a {
+  transform: scale(0.9); /* shrink menu text */
+}
+
+/* Navigation links */
+.nav-menu a {
+  text-decoration: none;
+  color: #555;
+  font-weight: 500;
+  font-size: 1.25rem;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.nav-menu a:hover,
+.nav-menu a.active {
+  color: #1976d2;
 }
 
 /* Search bar */
 .search-bar {
-  flex: 1;
-  display: flex;
-  justify-content: center;
+  max-width: 220px;
 }
 
 .search-input {
   width: 100%;
-  max-width: 1000px;
-  height: 36px;
-  padding: 0 15px;
-  border: 2px solid #ccc;
-  border-radius: 25px;
-  font-size: 1rem;
+  height: 40px;
+  padding: 0 12px;
+  border: 1.5px solid #ccc;
+  border-radius: 20px;
+  font-size: 0.9rem;
 }
 
-/* User actions container */
+/* User actions */
 .user-actions {
   display: flex;
   align-items: center;
-  gap: 0px;
-  position: relative; 
+  gap: 15px;
+  position: relative;
+  transition: transform 0.3s ease;
 }
 
-/* Icons styling */
+.app-header.shrink .user-actions {
+  transform: scale(0.9); /* shrink icons too */
+}
+
+/* Icons */
 .profile-btn mat-icon,
 .cart-btn mat-icon {
-  font-size: 36px;
-  color: #1976d2; /* blue icons */
+  font-size: 30px;
+  color: #1976d2;
 }
 
 /* Cart badge */
+.cart-btn {
+  position: relative;
+}
+
 .cart-count {
   position: absolute;
-  top: auto;
-  right: auto;
+  top: -6px;
+  right: -6px;
   background: #ff5252;
   color: white;
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   font-weight: bold;
   border-radius: 50%;
-  width: auto;
-  height: auto;
+  padding: 2px 6px;
+}
+
+/* Profile dropdown */
+.profile-menu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  border-radius: 6px;
+  z-index: 1010; /* Above header */
+  min-width: 130px;
   display: flex;
-  align-items: center;
-  justify-content: center;
+  flex-direction: column;
+}
+
+.profile-menu button {
+  padding: 10px 14px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.profile-menu button:hover {
+  background-color: #f5f5f5;
 }

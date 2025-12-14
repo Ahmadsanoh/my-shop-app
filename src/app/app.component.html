@@ -1,38 +1,48 @@
-<header class="app-header">
-  <!-- Logo (clickable, navigates to Home Page) -->
-  <div class="logo flex items-center gap-2">
-    <a routerLink="/home" class="logo-link">
+<header class="app-header" [class.shrink]="shrinkHeader()">
+
+  <!-- Logo -->
+  <div class="logo">
+    <a routerLink="/">
       <img src="assets/my-shop.png" alt="My Shop Logo" class="logo-img" />
     </a>
   </div>
 
-  <!-- Search Bar -->
-  <div class="search-bar flex-1 mx-4">
-    <input
-      type="text"
-      placeholder="Search products..."
-      class="search-input"
-      [(ngModel)]="searchQuery"
-      (keyup.enter)="onSearch()"
-    />
-  </div>
+  <!-- Menu -->
+  <nav class="nav-menu">
+    <a routerLink="/">Home</a>
+    <a routerLink="/dev/products">Shop</a>
+    <a routerLink="/categories">Categories</a>
+    <a routerLink="/contact">Contact</a>
+    <a routerLink="/about">About</a>
+  </nav>
 
-  <!-- User Actions -->
-  <div class="user-actions flex items-center gap-4">
-    <!-- Login/Profile Icon -->
-    <button mat-icon-button (click)="goToLogin()" class="profile-btn">
+  <!-- Right side -->
+  <div class="user-actions">
+    <div class="search-bar">
+      <input
+        type="text"
+        placeholder="Search"
+        class="search-input"
+        [(ngModel)]="searchQuery"
+        (keyup.enter)="onSearch()"
+      />
+    </div>
+
+    <button mat-icon-button class="profile-btn" (click)="goToProfile()">
       <mat-icon>account_circle</mat-icon>
     </button>
 
-    <!-- Cart Icon -->
-    <button mat-icon-button (click)="goToCart()" class="cart-btn">
+    <div class="profile-menu" *ngIf="!isLoggedIn() && showProfileMenu()">
+      <button (click)="goToLogin()">Login</button>
+      <button (click)="goToSignup()">Sign Up</button>
+    </div>
+
+    <button mat-icon-button class="cart-btn" (click)="goToCart()">
       <mat-icon>shopping_cart</mat-icon>
-      <span class="cart-count" *ngIf="cartCount() > 0">
-        {{ cartCount() }}
-      </span>
+      <span class="cart-count" *ngIf="cartCount() > 0">{{ cartCount() }}</span>
     </button>
   </div>
+
 </header>
 
-<!-- Main Content / Routing -->
 <router-outlet></router-outlet>

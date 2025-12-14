@@ -1,0 +1,10 @@
+<section class="orders-page">
+  <h2>Mes commandes</h2>
+  <ul>
+    <li *ngFor="let order of orders$ | async">
+      <a [routerLink]="['/account/orders', order.id]">
+        Commande #{{ order.id }} - {{ order.date }} - Total: {{ order.total }} € - {{ order.status }}
+      </a>
+    </li>
+  </ul>
+</section>

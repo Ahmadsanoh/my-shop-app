@@ -1,0 +1,29 @@
+<section class="profile-container">
+  <h2>Mon Profil</h2>
+
+  <div *ngIf="user$ | async as user">
+    <p><strong>Nom complet:</strong> {{ user.fullName }}</p>
+    <p><strong>Email:</strong> {{ user.email }}</p>
+
+    <h3>Préférences</h3>
+    <label>
+      <input
+        type="checkbox"
+        [checked]="user.preferences.newsletter"
+        (change)="updateNewsletterPreference($event.target.checked)"
+      />
+      Recevoir la newsletter
+    </label>
+
+    <div>
+      <label>
+        Note minimale par défaut:
+        <input
+          type="number"
+          [value]="user.preferences.defaultMinRating"
+          (change)="updateDefaultMinRating($event.target.valueAsNumber)"
+        />
+      </label>
+    </div>
+  </div>
+</section>

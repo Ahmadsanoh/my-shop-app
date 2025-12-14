@@ -56,8 +56,15 @@ export class SignupPageComponent {
       password: this.signupForm.value.password
     };
 
+    // Save user info in localStorage
     localStorage.setItem('user', JSON.stringify(newUser));
+    
+    // Set login token to simulate login
+    localStorage.setItem('access', 'mock-token');
+
     alert('Account created successfully!');
-    this.router.navigate(['/']);
+
+    // Navigate to profile page after signup
+    this.router.navigate(['/account/profile']);
   }
 }

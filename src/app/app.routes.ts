@@ -1,5 +1,4 @@
 import { Routes } from '@angular/router';
-
 import { HomeComponent } from './home.component';
 import { DevIndexComponent } from './dev/dev-index.component';
 import { DevAuthComponent } from './dev/dev-auth.component';
@@ -14,12 +13,19 @@ import { ProductsPageComponent } from './pages/login-page/products-page.componen
 import { SignupPageComponent } from './signup/signup-page';
 import { LandingPageComponent } from './landing-page.component';
 
+// Account pages
+import { ProfilePageComponent } from './pages/account/profile-page/profile-page';
+import { OrdersPageComponent } from './pages/account/orders-page/orders-page';
+import { OrderDetailPageComponent } from './pages/account/order-detail-page/order-detail-page';
+
 export const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: 'full' },
   { path: 'signup', component: SignupPageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'home', component: HomeComponent },
   { path: 'products', component: ProductsPageComponent },
+
+  // Dev routes
   { path: 'dev', component: DevIndexComponent },
   { path: 'dev/auth', component: DevAuthComponent },
   { path: 'dev/products', component: DevProductsComponent },
@@ -29,8 +35,13 @@ export const routes: Routes = [
   { path: 'dev/checkout', component: DevCheckoutComponent },
   { path: 'dev/orders', component: DevProductsOrderComponent },
 
+  // Account routes
+  { path: 'account/profile', component: ProfilePageComponent },
+  { path: 'account/orders', component: OrdersPageComponent },
+  { path: 'account/orders/:id', component: OrderDetailPageComponent },
+
+  // Placeholder
   { path: 'app', component: AppPlaceholderComponent },
 
-  // Fallback
   { path: '**', redirectTo: '' }
 ];
