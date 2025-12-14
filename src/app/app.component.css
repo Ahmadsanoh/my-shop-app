@@ -1,12 +1,12 @@
 /* ===== HEADER ===== */
 .app-header {
-  position: fixed; 
-  top: 0;    
+  position: fixed;
+  top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;   
+  z-index: 1000;
   background-color: #fff;
-  padding: 20px 30px; /* initial padding */
+  padding: 20px 30px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -16,98 +16,75 @@
 
 /* Shrinked header */
 .app-header.shrink {
-  padding: 10px 30px; /* smaller padding */
-  box-shadow: 0 2px 6px rgba(0,0,0,0.12);
+  padding: 10px 30px;
 }
 
-/* Add a small gap for all page content so header doesn't cover it */
-body > *:not(.app-header) {
-  margin-top: 80px; /* adjust to header height + small gap */
+/* Main content spacing */
+.main-content {
+  margin-top: 90px;
 }
 
-/* Logo */
-.logo {
-  display: flex;
-  align-items: center;
-  transition: transform 0.3s ease;
-}
-
-.app-header.shrink .logo {
-  transform: scale(0.85); /* shrink logo */
-}
-
+/* ===== LOGO ===== */
 .logo-img {
-  height: 60px;
-  width: auto;
-  object-fit: contain;
-  cursor: pointer;
-  transition: height 0.3s ease;
+  height: 65px;
+  width: 100px;
+  transition: all 0.3s ease;
 }
 
-/* Navigation menu */
+.app-header.shrink .logo-img {
+  height: 48px;
+}
+
+/* ===== NAV MENU ===== */
 .nav-menu {
   display: flex;
   gap: 40px;
-  transition: transform 0.3s ease;
 }
 
-.app-header.shrink .nav-menu a {
-  transform: scale(0.9); /* shrink menu text */
-}
-
-/* Navigation links */
 .nav-menu a {
   text-decoration: none;
   color: #555;
   font-weight: 500;
-  font-size: 1.25rem;
-  transition: color 0.3s ease, transform 0.3s ease;
+  font-size: 1.1rem;
 }
 
-.nav-menu a:hover,
-.nav-menu a.active {
+.nav-menu a:hover {
   color: #1976d2;
 }
 
-/* Search bar */
-.search-bar {
-  max-width: 220px;
-}
-
-.search-input {
-  width: 100%;
-  height: 40px;
-  padding: 0 12px;
-  border: 1.5px solid #ccc;
-  border-radius: 20px;
-  font-size: 0.9rem;
-}
-
-/* User actions */
+/* ===== USER ACTIONS ===== */
 .user-actions {
   display: flex;
   align-items: center;
-  gap: 15px;
-  position: relative;
-  transition: transform 0.3s ease;
+  gap: 16px;
 }
 
-.app-header.shrink .user-actions {
-  transform: scale(0.9); /* shrink icons too */
+/* ===== SEARCH ===== */
+.search-input {
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 20px;
+  border: 1px solid #ccc;
 }
 
-/* Icons */
-.profile-btn mat-icon,
-.cart-btn mat-icon {
-  font-size: 30px;
-  color: #1976d2;
-}
-
-/* Cart badge */
+/* ===== ICON BUTTONS ===== */
+.profile-btn,
 .cart-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
   position: relative;
+  padding: 6px;
 }
 
+/* ✅ SVG ICON FIX (IMPORTANT) */
+.icon-svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+}
+
+/* ===== CART BADGE ===== */
 .cart-count {
   position: absolute;
   top: -6px;
@@ -120,21 +97,40 @@ body > *:not(.app-header) {
   padding: 2px 6px;
 }
 
-/* Profile dropdown */
-.profile-menu {
-  position: absolute;
-  top: 45px;
-  right: 0;
-  background-color: white;
-  border: 1px solid #ccc;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-  border-radius: 6px;
-  z-index: 1010; /* Above header */
-  min-width: 130px;
-  display: flex;
-  flex-direction: column;
+/* ===== PROFILE MENU ===== */
+.profile-wrapper {
+  position: relative;
 }
 
+/* Profile menu hidden by default */
+.profile-menu {
+  position: absolute;
+  top: 42px;
+  right: 0;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+  min-width: 180px;
+  display: none; /* hidden initially */
+  flex-direction: column;
+  z-index: 100;
+}
+
+/* Show profile menu on hover */
+.profile-wrapper:hover .profile-menu {
+  display: flex;
+}
+
+/* ===== PROFILE SUBTITLE ===== */
+.profile-subtitle {
+  padding: 10px 14px;
+  font-weight: bold;
+  border-bottom: 1px solid #eee;
+  color: #333;
+  cursor: default;
+}
+
+/* ===== PROFILE MENU BUTTONS ===== */
 .profile-menu button {
   padding: 10px 14px;
   border: none;
@@ -144,5 +140,5 @@ body > *:not(.app-header) {
 }
 
 .profile-menu button:hover {
-  background-color: #f5f5f5;
+  background: #f5f5f5;
 }

@@ -30,12 +30,17 @@ export class LoginPageComponent {
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
+      username: ['', [Validators.required, Validators.email]], // email required
+      password: ['', Validators.required] // password required
     });
   }
 
   onSubmit() {
+    if (this.loginForm.invalid) {
+      this.loginForm.markAllAsTouched();
+      return;
+    }
+
     const { username, password } = this.loginForm.value;
     const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
 
@@ -45,5 +50,16 @@ export class LoginPageComponent {
     } else {
       alert('Invalid username or password');
     }
+  }
+
+  // Dummy social login functions
+  loginWithGoogle() {
+    alert('Google login clicked!');
+    // Implement real Google OAuth here
+  }
+
+  loginWithFacebook() {
+    alert('Facebook login clicked!');
+    // Implement real Facebook OAuth here
   }
 }

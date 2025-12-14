@@ -1,10 +1,11 @@
 import { Component, signal, computed, HostListener } from '@angular/core';
 import { RouterOutlet, Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { MaterialModule } from './material.module';
-import { MatIconModule } from '@angular/material/icon';
-import { SearchService } from './search.service';
 import { NgIf } from '@angular/common';
+
+import { MaterialModule } from './material.module';
+import { SearchService } from './search.service';
+import { FooterComponent } from './shared/footer/footer.component';
 
 @Component({
   selector: 'app-root',
@@ -12,43 +13,40 @@ import { NgIf } from '@angular/common';
   imports: [
     RouterOutlet,
     RouterLink,
-    MaterialModule,
     FormsModule,
-    MatIconModule,
-    NgIf
+    NgIf,
+    MaterialModule,
+    FooterComponent
   ],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
+
   title = 'My Shop';
   searchQuery = '';
 
-  // Track login state
+  /* ===== STATE ===== */
   isLoggedIn = signal<boolean>(false);
-
-  // Track if profile menu is open for not-logged-in users
   showProfileMenuFlag = signal<boolean>(false);
-
-  // Cart state
   cart = signal<any[]>(JSON.parse(localStorage.getItem('cart') || '[]'));
   cartCount = computed(() => this.cart().length);
+  shrinkHeader = signal<boolean>(false);
 
-  // Shrink header state
-  shrinkHeader = signal(false);
-
-  constructor(private router: Router, private searchService: SearchService) {
+  constructor(
+    private router: Router,
+    private searchService: SearchService
+  ) {
     this.checkLoginStatus();
   }
 
-  // Scroll listener
-  @HostListener('window:scroll', [])
+  /* ===== HEADER SCROLL EFFECT ===== */
+  @HostListener('window:scroll')
   onWindowScroll() {
-    const offset = window.pageYOffset;
-    this.shrinkHeader.set(offset > 50); // shrink after 50px scroll
+    this.shrinkHeader.set(window.pageYOffset > 50);
   }
 
-  // Check login token in localStorage
+  /* ===== AUTH ===== */
   checkLoginStatus() {
     const token = localStorage.getItem('access');
     this.isLoggedIn.set(!!token);
@@ -64,10 +62,6 @@ export class AppComponent {
     this.showProfileMenuFlag.set(false);
   }
 
-  goToCart() {
-    this.router.navigate(['/dev/cart']);
-  }
-
   goToProfile() {
     if (this.isLoggedIn()) {
       this.router.navigate(['/account/profile']);
@@ -80,6 +74,12 @@ export class AppComponent {
     return this.showProfileMenuFlag();
   }
 
+  /* ===== CART ===== */
+  goToCart() {
+    this.router.navigate(['/dev/cart']);
+  }
+
+  /* ===== SEARCH ===== */
   onSearch() {
     this.searchService.searchQuery.set(this.searchQuery);
     this.router.navigate(['/dev/products']);

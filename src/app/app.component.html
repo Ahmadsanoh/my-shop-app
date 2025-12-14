@@ -1,13 +1,13 @@
 <header class="app-header" [class.shrink]="shrinkHeader()">
 
-  <!-- Logo -->
+  <!-- LOGO -->
   <div class="logo">
     <a routerLink="/">
       <img src="assets/my-shop.png" alt="My Shop Logo" class="logo-img" />
     </a>
   </div>
 
-  <!-- Menu -->
+  <!-- NAV -->
   <nav class="nav-menu">
     <a routerLink="/">Home</a>
     <a routerLink="/dev/products">Shop</a>
@@ -16,33 +16,71 @@
     <a routerLink="/about">About</a>
   </nav>
 
-  <!-- Right side -->
+  <!-- USER ACTIONS -->
   <div class="user-actions">
-    <div class="search-bar">
-      <input
-        type="text"
-        placeholder="Search"
-        class="search-input"
-        [(ngModel)]="searchQuery"
-        (keyup.enter)="onSearch()"
-      />
+
+    <!-- Search -->
+    <input
+      type="text"
+      placeholder="Search"
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearch()"
+    />
+
+    <!-- PROFILE -->
+    <div class="profile-wrapper">
+      <button class="profile-btn">
+        <svg class="icon-svg" viewBox="0 0 24 24">
+          <path fill="#1976d2"
+            d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/>
+        </svg>
+      </button>
+
+<!-- PROFILE MENU (SHOW ON HOVER) -->
+<div class="profile-menu">
+
+  <!-- SUBTITLE (CLICKABLE) -->
+  <button class="profile-subtitle" (click)="goToLogin()">
+    Login / Sign Up
+  </button>
+
+  <!-- NOT LOGGED IN -->
+  <ng-container *ngIf="!isLoggedIn(); else loggedInMenu">
+    <button (click)="goToLogin()">Login</button>
+    <button (click)="goToSignup()">Sign Up</button>
+  </ng-container>
+
+  <!-- LOGGED IN -->
+  <ng-template #loggedInMenu>
+    <button routerLink="/account/profile">My Profile</button>
+    <button routerLink="/account/orders">My Orders</button>
+    <button routerLink="/account/notifications">My Notifications</button>
+    <button routerLink="/account/coupons">My Coupons</button>
+    <button routerLink="/account/bonus-points">My Bonus Points</button>
+  </ng-template>
+
+</div>
+
     </div>
 
-    <button mat-icon-button class="profile-btn" (click)="goToProfile()">
-      <mat-icon>account_circle</mat-icon>
+    <!-- CART -->
+    <button class="cart-btn" (click)="goToCart()">
+      <svg class="icon-svg" viewBox="0 0 24 24">
+        <path fill="#1976d2"
+          d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 2h2l3.6 7.6-1.4 2.4c-.2.3-.2.6-.2 1a2 2 0 002 2h12v-2H11.4l.9-1.7L19 4H6z"/>
+      </svg>
+
+      <span class="cart-count" *ngIf="cartCount() > 0">
+        {{ cartCount() }}
+      </span>
     </button>
 
-    <div class="profile-menu" *ngIf="!isLoggedIn() && showProfileMenu()">
-      <button (click)="goToLogin()">Login</button>
-      <button (click)="goToSignup()">Sign Up</button>
-    </div>
-
-    <button mat-icon-button class="cart-btn" (click)="goToCart()">
-      <mat-icon>shopping_cart</mat-icon>
-      <span class="cart-count" *ngIf="cartCount() > 0">{{ cartCount() }}</span>
-    </button>
   </div>
-
 </header>
 
-<router-outlet></router-outlet>
+<main class="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<app-footer></app-footer>

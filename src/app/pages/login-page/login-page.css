@@ -28,7 +28,7 @@
   backdrop-filter: blur(4px);
 }
 
-/* Left */
+/* Left pane */
 .left-pane {
   flex: 1;
   padding: 50px 30px;
@@ -54,24 +54,51 @@ input.mat-input-element {
   color: #000;
 }
 
-/* Submit button width */
+/* Submit button */
 .full-width {
   width: 100%;
 }
 
-/* Social buttons */
+/* =========================
+   SOCIAL LOGIN
+========================= */
 .social-login {
   margin-top: 15px;
   display: flex;
+  flex-direction: column;
   gap: 10px;
-  justify-content: center;
 }
 
+/* Social buttons */
 button.social-btn {
-  flex: 1;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  font-weight: 500;
+  text-transform: none;
 }
 
-/* Signup link & button */
+/* SVG icons */
+.social-icon {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+/* Optional brand borders */
+button.social-btn.google {
+  border-color: #ddd;
+}
+
+button.social-btn.facebook {
+  border-color: #1877f2;
+}
+
+/* =========================
+   SIGN UP LINK
+========================= */
 .signup-link {
   margin-top: 15px;
   text-align: center;
@@ -92,7 +119,9 @@ button.social-btn {
   border-color: #4da1ff;
 }
 
-/* Right pane */
+/* =========================
+   RIGHT PANE
+========================= */
 .right-pane {
   flex: 1;
   display: none;

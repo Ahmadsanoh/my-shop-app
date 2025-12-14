@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
@@ -8,17 +8,14 @@ import { MatButtonModule } from '@angular/material/button';
   standalone: true,
   imports: [CommonModule, RouterLink, MatButtonModule],
   template: `
-    <!-- ===== SLIDER ===== -->
+    <!-- ===== HERO SLIDER ===== -->
     <section class="slider">
       <div
         class="slide"
         *ngFor="let slide of slides; let i = index"
         [class.active]="i === currentIndex"
       >
-        <!-- Full-width background image -->
-        <img [src]="slide.image" alt="slide image" class="slide-bg" />
-
-        <!-- Text content centered -->
+        <img [src]="slide.image" class="slide-bg" />
         <div class="slide-content">
           <div class="slide-text">
             <h1>{{ slide.title }}</h1>
@@ -30,36 +27,46 @@ import { MatButtonModule } from '@angular/material/button';
         </div>
       </div>
 
-      <!-- ARROWS -->
       <button class="nav prev" (click)="prevSlide()">&#10094;</button>
       <button class="nav next" (click)="nextSlide()">&#10095;</button>
+    </section>
 
-      <!-- DOTS -->
-      <div class="dots">
-        <span
-          *ngFor="let _ of slides; let i = index"
-          [class.active]="i === currentIndex"
-          (click)="goToSlide(i)"
-        ></span>
+    <!-- ===== FEATURES ===== -->
+    <section class="feature-container">
+      <div class="feature" *ngFor="let f of features">
+        <div class="feature-item">
+          <div class="feature-icon">
+            <svg viewBox="0 0 24 24">
+              <path [attr.d]="f.svgPath" fill="white" />
+            </svg>
+          </div>
+          <div>
+            <h3>{{ f.title }}</h3>
+            <p>{{ f.subtitle }}</p>
+          </div>
+        </div>
       </div>
     </section>
 
-    <!-- ===== SECOND CONTAINER ===== -->
-    <section class="landing-hero">
-      <div class="hero-content">
-        <h2>Why Choose My Shop?</h2>
-        <p>
-          Quality products, fast delivery, and secure checkout experience.
-        </p>
+    <!-- ===== FEATURED PRODUCTS ===== -->
+    <section class="products-section">
+      <h2 class="section-title">Featured Products</h2>
 
-        <div class="cta-buttons">
-          <button mat-flat-button color="primary" routerLink="/login">
-            Login
-          </button>
-          <button mat-flat-button color="accent" routerLink="/signup">
-            Sign Up
-          </button>
+      <div class="products-carousel">
+        <button class="prod-nav" (click)="prevProduct()">&#10094;</button>
+
+        <div class="products-track">
+          <div
+            class="product-card"
+            *ngFor="let p of visibleProducts"
+          >
+            <img [src]="p.image" />
+            <h3>{{ p.name }}</h3>
+            <p class="price">€{{ p.price }}</p>
+          </div>
         </div>
+
+        <button class="prod-nav" (click)="nextProduct()">&#10095;</button>
       </div>
     </section>
   `,
@@ -67,185 +74,222 @@ import { MatButtonModule } from '@angular/material/button';
     /* ===== SLIDER ===== */
     .slider {
       position: relative;
-      width: 100%;
       height: 520px;
       overflow: hidden;
     }
-
     .slide {
       position: absolute;
       inset: 0;
       opacity: 0;
-      transition: opacity 1s ease;
-      pointer-events: none;
+      transition: opacity 1s;
     }
-
     .slide.active {
       opacity: 1;
-      z-index: 2;
-      pointer-events: auto;
-    }
-
-    /* Full-width background image */
-    .slide-bg {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      object-fit: cover; /* ensures full coverage */
       z-index: 1;
     }
-
-    /* Text content */
-    .slide-content {
-      position: relative;
-      z-index: 2;
-      max-width: 1200px;
+    .slide-bg {
+      width: 100%;
       height: 100%;
-      margin: auto;
+      object-fit: cover;
+    }
+    .slide-content {
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
-      padding: 0 40px;
+      padding: 40px;
       color: #fff;
-      text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+      background: rgba(0,0,0,0.35);
     }
-
     .slide-text h1 {
-      font-size: 3rem;
-      margin-bottom: 1.5rem;
+      font-size: 3.2rem;
+      margin-bottom: 12px;
     }
-
     .slide-text p {
-      font-size: 1.3rem;
-      margin-bottom: 2rem;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
     }
 
-    .slide-text button {
-      font-weight: 600;
+    /* ===== FEATURES ===== */
+    .feature-container {
+      display: flex;
+      justify-content: space-around;
+      padding: 80px 20px;
+      background: linear-gradient(135deg, #3a5f99, #133766);
+      flex-wrap: wrap;
     }
-
-    /* ===== ARROWS ===== */
-    .nav {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      width: 48px;
-      height: 48px;
+    .feature {
+      color: white;
+      width: 300px;
+    }
+    .feature-item {
+      display: flex;
+      gap: 15px;
+    }
+    .feature-icon {
+      width: 60px;
+      height: 60px;
+      background: rgba(255,255,255,0.2);
       border-radius: 50%;
-      background: rgba(0,0,0,0.5);
-      color: #fff;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-      z-index: 10;
       display: flex;
       align-items: center;
       justify-content: center;
+    }
+    .feature-icon svg {
+      width: 32px;
+      height: 32px;
+    }
+
+    /* ===== PRODUCTS ===== */
+    .products-section {
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: 2.6rem;
+      font-weight: 700;
+      margin-bottom: 40px;
+    }
+
+    .products-carousel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 25px;
+    }
+
+    .products-track {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 900px;
+    }
+
+    .product-card {
+      background: #fff;
+      padding: 15px;
+      border-radius: 14px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      transition: transform 0.3s;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+    }
+    .product-card img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+    .product-card h3 {
+      margin: 12px 0 5px;
+      font-size: 1.2rem;
+    }
+    .price {
+      font-weight: bold;
+      color: #1976d2;
+    }
+
+    .prod-nav {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: #1976d2;
+      color: white;
+      border: none;
+      font-size: 24px;
+      cursor: pointer;
       transition: background 0.3s;
     }
-
-    .nav:hover {
-      background: rgba(0,0,0,0.8);
+    .prod-nav:hover {
+      background: #115293;
     }
 
-    .prev { left: 20px; }
-    .next { right: 20px; }
-
-    /* ===== DOTS ===== */
-    .dots {
-      position: absolute;
-      bottom: 20px;
-      width: 100%;
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      z-index: 10;
+    @media (max-width: 900px) {
+      .products-track {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
-
-    .dots span {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(0,0,0,0.4);
-      cursor: pointer;
-      transition: transform 0.2s, background 0.3s;
-    }
-
-    .dots span:hover {
-      transform: scale(1.3);
-    }
-
-    .dots span.active {
-      background: #1976d2;
-    }
-
-    /* ===== SECOND CONTAINER ===== */
-    .landing-hero {
-      padding: 80px 20px;
-      background: linear-gradient(135deg, #66a6ff, #89f7fe);
-      text-align: center;
-      color: #fff;
-    }
-
-    .hero-content h2 {
-      font-size: 2.5rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .hero-content p {
-      font-size: 1.2rem;
-      margin-bottom: 2rem;
-    }
-
-    .cta-buttons button {
-      margin: 0 10px;
-      font-weight: 600;
-    }
-
-    /* ===== RESPONSIVE ===== */
-    @media (max-width: 1000px) {
-      .slide-content {
-        flex-direction: column;
-        text-align: center;
+    @media (max-width: 600px) {
+      .products-track {
+        grid-template-columns: 1fr;
       }
     }
   `]
 })
-export class LandingPageComponent {
+export class LandingPageComponent implements OnInit, OnDestroy {
+
+  /* ===== HERO SLIDER ===== */
   slides = [
+    { title: 'Discover Premium', subtitle: 'Handpicked items just for you.', image: 'assets/slider1.jpg' },
+    { title: 'Fast & Secure Shopping', subtitle: 'Easy checkout and quick delivery.', image: 'assets/slider2.jpg' },
+    { title: 'Shop With Confidence', subtitle: 'Trusted by thousands.', image: 'assets/slider3.jpg' }
+  ];
+  currentIndex = 0;
+  heroInterval!: any;
+
+  /* ===== FEATURES ===== */
+  features = [
     {
-      title: 'Discover Premium',
-      subtitle: 'Handpicked items just for you.',
-      image: 'assets/slider1.jpg'
+      title: 'FREE SHIPPING',
+      subtitle: 'Fast and secure delivery',
+      svgPath: 'M20 8h-3V4H3v12h2a3 3 0 006 0h2a3 3 0 006 0h1v-4z'
     },
     {
-      title: 'Fast & Secure Shopping',
-      subtitle: 'Easy checkout and quick delivery.',
-      image: 'assets/slider2.jpg'
+      title: 'FREE RETURNS',
+      subtitle: '30 days return policy',
+      svgPath: 'M12 4V1L8 5l4 4V6a6 6 0 11-6 6'
     },
     {
-      title: 'Shop With Confidence',
-      subtitle: 'Trusted by thousands of customers.',
-      image: 'assets/slider3.jpg'
+      title: 'CUSTOMER SUPPORT',
+      subtitle: '24/7 live assistance',
+      svgPath: 'M12 1c-3.86 0-7 3.14-7 7v3H4v6h2v-6h2v6h2v-6h2v6h2v-6h-1V8c0-3.86-3.14-7-7-7z'
     }
   ];
 
-  currentIndex = 0;
+  /* ===== PRODUCTS ===== */
+  products = [
+    { name: 'Tampon Encreur', price: 9.99, image: 'https://cdn.france-tampon.fr/3849-large_default/tampon-personnalise-shiny-printer-r552-10-lignes-52mm.jpg' },
+    { name: 'Marqueur Effaçable', price: 3.50, image: 'https://m.media-amazon.com/images/I/81WJhUbn+KL.jpg' },
+    { name: 'Palette Aquarelle', price: 12.99, image: 'https://m.media-amazon.com/images/I/516rLHAitlS._SL500_.jpg' },
+    { name: 'Pinceau Fin', price: 4.20, image: 'https://m.media-amazon.com/images/I/61qaBYuyqXL.jpg' },
+    { name: 'Feutres Couleur', price: 8.90, image: 'https://confetticampus.fr/wp-content/uploads/2022/01/stabilo-pen-68-feutres-de-dessin-x10.jpg' }
+  ];
 
-  constructor() {
-    setInterval(() => this.nextSlide(), 5000);
+  productIndex = 0;
+  productInterval!: any;
+
+  get visibleProducts() {
+    const result = [];
+    for (let i = 0; i < 3; i++) {
+      result.push(this.products[(this.productIndex + i) % this.products.length]);
+    }
+    return result;
+  }
+
+  ngOnInit() {
+    this.heroInterval = setInterval(() => this.nextSlide(), 5000);
+    this.productInterval = setInterval(() => this.nextProduct(), 4000);
+  }
+
+  ngOnDestroy() {
+    clearInterval(this.heroInterval);
+    clearInterval(this.productInterval);
   }
 
   nextSlide() {
     this.currentIndex = (this.currentIndex + 1) % this.slides.length;
   }
-
   prevSlide() {
     this.currentIndex = (this.currentIndex - 1 + this.slides.length) % this.slides.length;
   }
 
-  goToSlide(index: number) {
-    this.currentIndex = index;
+  nextProduct() {
+    this.productIndex = (this.productIndex + 1) % this.products.length;
+  }
+  prevProduct() {
+    this.productIndex =
+      (this.productIndex - 1 + this.products.length) % this.products.length;
   }
 }
