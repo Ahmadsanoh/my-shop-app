@@ -14,9 +14,14 @@
           Orders
         </button>
 
-        <button (click)="selectTab('favorites')" [class.active]="selectedTab==='favorites'">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-          Favorites
+        <button (click)="selectTab('favoritesWishlist')" [class.active]="selectedTab==='favoritesWishlist'">
+          <svg width="20" height="20" viewBox="0 0 24 24">
+            <path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5
+            2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+            C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5
+            c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          Favorites/Wishlist
         </button>
 
         <button (click)="selectTab('personalData')" [class.active]="selectedTab==='personalData'">
@@ -25,18 +30,13 @@
         </button>
 
         <button (click)="selectTab('changePassword')" [class.active]="selectedTab==='changePassword'">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17c1.66 0 2.99-1.34 2.99-3L15 9h-3V6h-2v3H9v5c0 1.66 1.34 3 3 3z"/></svg>
+          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 17a2 2 0 0 0 2-2v-3a2 2 0 0 0-4 0v3a2 2 0 0 0 2 2zm6-8h-1V7a5 5 0 0 0-10 0v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V11c0-1.1-.9-2-2-2zM8 7a4 4 0 0 1 8 0v2H8V7z"/></svg>
           Change Password
         </button>
 
         <button (click)="selectTab('addresses')" [class.active]="selectedTab==='addresses'">
           <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5S10.62 6.5 12 6.5s2.5 1.12 2.5 2.5S13.38 11.5 12 11.5z"/></svg>
           Addresses
-        </button>
-
-        <button (click)="selectTab('logout')" [class.active]="selectedTab==='logout'">
-          <svg width="20" height="20" viewBox="0 0 24 24"><path fill="currentColor" d="M16 13v-2H7V8l-5 4 5 4v-3zM20 3h-8v2h8v14h-8v2h8c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2z"/></svg>
-          Logout
         </button>
 
       </div>
@@ -52,7 +52,7 @@
 
         <div *ngFor="let o of orders()" class="order-card">
           <strong>Order #{{ o.id }}</strong> - Placed on {{ getDeliveryRange(o.date) }}
-          <p>Total: €{{ o.total }}</p>
+          <p>Total: €{{ discountedPrice(o.total) }}</p>
 
           <div *ngFor="let i of o.items" class="order-item">
             <span>{{ i.name }} - Qty: {{ i.quantity }} - €{{ discountedPrice(i.price) }}</span>
@@ -63,10 +63,20 @@
         </div>
       </div>
 
-      <!-- FAVORITES TAB -->
-      <div *ngIf="selectedTab==='favorites'">
-        <h2>My Favorites</h2>
-        <p>You haven't added any favorite products yet.</p>
+      <!-- FAVORITES/WISHLIST TAB -->
+      <div *ngIf="selectedTab==='favoritesWishlist'">
+        <h2>Favorites / Wishlist</h2>
+        <p *ngIf="wishlist().length === 0">You have no favorite or wishlist products yet.</p>
+
+        <div class="products-grid" *ngIf="wishlist().length > 0">
+          <div *ngFor="let p of wishlist()" class="product-card">
+            <img *ngIf="p.image" [src]="p.image" alt="{{p.name}}" class="product-image">
+            <h3>{{ p.name }}</h3>
+            <p>Price: €{{ p.price }}</p>
+            <p>Created: {{ p.created_at }}</p>
+            <button class="remove-btn" (click)="removeFromWishlist(p)">Remove</button>
+          </div>
+        </div>
       </div>
 
       <!-- PERSONAL DATA TAB -->
@@ -85,12 +95,6 @@
       <div *ngIf="selectedTab==='addresses'">
         <h2>Addresses</h2>
         <p>You can manage your saved addresses here.</p>
-      </div>
-
-      <!-- LOGOUT TAB -->
-      <div *ngIf="selectedTab==='logout'">
-        <h2>Logout</h2>
-        <p>You have successfully logged out.</p>
       </div>
 
     </div>

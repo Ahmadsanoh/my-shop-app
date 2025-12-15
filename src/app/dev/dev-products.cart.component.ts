@@ -131,18 +131,18 @@ interface Product {
 }
 
 .browse-btn, .checkout-btn {
-  background-color: #ffb347;
+  background-color: #6372e8ff;
 }
 .browse-btn:hover, .checkout-btn:hover {
-  background-color: #ff8f00;
+  background-color: #374ae1ff;
   transform: translateY(-2px);
 }
 
 .remove-btn {
-  background-color: #e74c3c;
+  background-color: #6372e8ff;
 }
 .remove-btn:hover {
-  background-color: #c0392b;
+  background-color: #374ae1ff;
   transform: translateY(-2px);
 }
 

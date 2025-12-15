@@ -3,7 +3,17 @@ import { CommonModule } from '@angular/common';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { OrderItem, Order, OrderItemDetailsDialog } from '../../../dev/dev-products.order.component';
 
-type DashboardTab = 'orders' | 'favorites' | 'personalData' | 'changePassword' | 'addresses' | 'logout';
+interface Product {
+  id: number;
+  name: string;
+  price: number;
+  created_at: string;
+  image?: string;
+  quantity?: number;
+}
+
+type DashboardTab = 'orders' | 'favoritesWishlist' | 'personalData' | 'changePassword' | 'addresses';
+
 
 @Component({
   selector: 'app-profile-page',
@@ -17,10 +27,11 @@ export class ProfilePageComponent {
 
   // Orders data (simulating stored orders)
   readonly orders = signal<Order[]>([]);
+  readonly wishlist = signal<Product[]>(JSON.parse(localStorage.getItem('wishlist') || '[]'));
 
   constructor(private dialog: MatDialog) {
-    const stored = localStorage.getItem("orders");
-    this.orders.set(stored ? JSON.parse(stored) : []);
+    const storedOrders = localStorage.getItem("orders");
+    this.orders.set(storedOrders ? JSON.parse(storedOrders) : []);
   }
 
   // Switch tabs
@@ -54,5 +65,12 @@ export class ProfilePageComponent {
     const updatedOrders = this.orders().filter(o => o.id !== orderId);
     this.orders.set(updatedOrders);
     localStorage.setItem("orders", JSON.stringify(updatedOrders));
+  }
+
+  // Remove a product from wishlist
+  removeFromWishlist(product: Product) {
+    const updated = this.wishlist().filter(p => p.id !== product.id);
+    this.wishlist.set(updated);
+    localStorage.setItem('wishlist', JSON.stringify(updated));
   }
 }
