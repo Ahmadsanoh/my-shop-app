@@ -44,3 +44,5 @@ Thumbs.db
 
 *storybook.log
 storybook-static
+
+echo "src/environments/firebase.config.ts" >> .gitignore
