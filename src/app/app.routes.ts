@@ -1,5 +1,11 @@
 import { Routes } from '@angular/router';
+import { LandingPageComponent } from './landing-page.component';
+import { SignupPageComponent } from './signup/signup-page';
+import { LoginPageComponent } from './pages/login-page/login-page';
 import { HomeComponent } from './home.component';
+import { ProductsPageComponent } from './pages/login-page/products-page.component';
+
+// Dev routes
 import { DevIndexComponent } from './dev/dev-index.component';
 import { DevAuthComponent } from './dev/dev-auth.component';
 import { DevProductsComponent } from './dev/dev-products.component';
@@ -7,16 +13,13 @@ import { DevProductRatingComponent } from './dev/dev-product-rating.component';
 import { DevCartComponent } from './dev/dev-products.cart.component';
 import { DevCheckoutComponent } from './dev/dev-products.checkout.component';
 import { DevProductsOrderComponent } from './dev/dev-products.order.component';
-import { AppPlaceholderComponent } from './app-placeholder.component';
-import { LoginPageComponent } from './pages/login-page/login-page';
-import { ProductsPageComponent } from './pages/login-page/products-page.component';
-import { SignupPageComponent } from './signup/signup-page';
-import { LandingPageComponent } from './landing-page.component';
 
 // Account pages
 import { ProfilePageComponent } from './pages/account/profile-page/profile-page';
 import { OrdersPageComponent } from './pages/account/orders-page/orders-page';
 import { OrderDetailPageComponent } from './pages/account/order-detail-page/order-detail-page';
+
+import { AppPlaceholderComponent } from './app-placeholder.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: 'full' },
@@ -35,12 +38,24 @@ export const routes: Routes = [
   { path: 'dev/checkout', component: DevCheckoutComponent },
   { path: 'dev/orders', component: DevProductsOrderComponent },
 
-  // Account routes
-  { path: 'account/profile', component: ProfilePageComponent },
-  { path: 'account/orders', component: OrdersPageComponent },
-  { path: 'account/orders/:id', component: OrderDetailPageComponent },
+  // Account Dashboard (parent route)
+  {
+    path: 'account',
+    component: ProfilePageComponent, // this is now the dashboard layout
+    children: [
+      { path: '', redirectTo: 'profile', pathMatch: 'full' },
+      { path: 'profile', component: ProfilePageComponent },
+      { path: 'orders', component: OrdersPageComponent },
+      { path: 'orders/:id', component: OrderDetailPageComponent },
+      // Placeholder routes for other buttons
+      { path: 'favorites', component: AppPlaceholderComponent },
+      { path: 'personal-data', component: AppPlaceholderComponent },
+      { path: 'addresses', component: AppPlaceholderComponent },
+      { path: 'change-password', component: AppPlaceholderComponent },
+    ]
+  },
 
-  // Placeholder
+  // Placeholder route
   { path: 'app', component: AppPlaceholderComponent },
 
   { path: '**', redirectTo: '' }

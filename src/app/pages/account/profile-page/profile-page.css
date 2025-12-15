@@ -1,28 +1,82 @@
-.profile-container {
-  max-width: 600px;
-  margin: 30px auto;
-  padding: 20px;
-  background-color: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+/* PAGE CONTAINER */
+.profile-page-container {
+  padding-top: 70px; /* space for fixed menu */
+  max-width: 1200px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
 }
 
-.profile-container h2 {
-  text-align: center;
+/* DASHBOARD TITLE */
+.dashboard-title {
+  font-weight: bold;
   margin-bottom: 20px;
+  text-align: left;
 }
 
-.profile-container p {
-  margin-bottom: 10px;
+/* TWO-COLUMN DASHBOARD */
+.profile-dashboard {
+  display: flex;
+  gap: 0; /* no gap between columns */
 }
 
-.profile-container label {
+/* LEFT COLUMN (Sidebar) */
+.profile-sidebar {
+  width: 25%;
+  background: #f9f9f9;
+  padding: 20px;
+}
+
+.sidebar-buttons button {
   display: flex;
   align-items: center;
-  margin-bottom: 10px;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 15px;
+  margin-bottom: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  text-align: left;
+  border-radius: 6px;
+  transition: background 0.2s;
 }
 
-.profile-container input[type='number'] {
-  width: 60px;
-  margin-left: 10px;
+.sidebar-buttons button svg {
+  fill: #1976d2;
+}
+
+.sidebar-buttons button:hover,
+.sidebar-buttons button.active {
+  background: #e0e0e0;
+}
+
+/* RIGHT COLUMN (Dynamic Content) */
+.profile-content {
+  width: 75%;
+  padding: 20px;
+}
+
+.order-card {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 15px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  margin: 8px 0;
+}
+
+.delete-btn {
+  margin-top: 10px;
+  background-color: #3c72e7;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 6px;
+  cursor: pointer;
 }

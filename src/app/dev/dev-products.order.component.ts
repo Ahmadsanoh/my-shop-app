@@ -5,7 +5,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-interface OrderItem {
+export interface OrderItem {
   id: number;
   name: string;
   price: number;
@@ -13,12 +13,14 @@ interface OrderItem {
   image?: string;
 }
 
-interface Order {
+export interface Order {
   id: string;
   date: string;
   items: OrderItem[];
   total: number;
 }
+
+
 
 /* ORDER ITEM DETAILS DIALOG */
 @Component({
