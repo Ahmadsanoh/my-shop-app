@@ -1,74 +1,126 @@
 <div class="signup-wrapper">
   <div class="signup-container">
+
+    <!-- LEFT PANE -->
     <div class="left-pane">
       <h2>Create Account</h2>
 
       <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
 
-        <!-- Username -->
-        <mat-form-field appearance="fill">
-          <mat-label>Username</mat-label>
-          <input matInput placeholder="Enter your username" formControlName="username">
-        </mat-form-field>
-
         <!-- Email -->
         <mat-form-field appearance="fill">
           <mat-label>Email</mat-label>
-          <input matInput type="email" placeholder="Enter your email" formControlName="email">
+          <input matInput type="email" placeholder="Enter your email" formControlName="email" />
+          <mat-error *ngIf="signupForm.get('email')?.hasError('required')">
+            Email is required
+          </mat-error>
+          <mat-error *ngIf="signupForm.get('email')?.hasError('email')">
+            Enter a valid email
+          </mat-error>
         </mat-form-field>
 
         <!-- Password -->
         <mat-form-field appearance="fill">
           <mat-label>Password</mat-label>
-          <input matInput 
-                 [type]="hidePassword ? 'password' : 'text'" 
-                 placeholder="Enter password" 
-                 formControlName="password">
-
-          <button mat-icon-button
-                  matSuffix
-                  type="button"
-                  (click)="hidePassword = !hidePassword">
+          <input
+            matInput
+            [type]="hidePassword ? 'password' : 'text'"
+            placeholder="Enter password"
+            formControlName="password"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hidePassword = !hidePassword">
             <mat-icon>{{ hidePassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
+
+          <mat-error *ngIf="signupForm.get('password')?.hasError('required')">
+            Password is required
+          </mat-error>
+          <mat-error *ngIf="signupForm.get('password')?.hasError('minlength')">
+            Minimum 6 characters
+          </mat-error>
         </mat-form-field>
 
         <!-- Confirm Password -->
         <mat-form-field appearance="fill">
           <mat-label>Confirm Password</mat-label>
-          <input matInput 
-                 [type]="hideConfirmPassword ? 'password' : 'text'" 
-                 placeholder="Confirm password" 
-                 formControlName="confirmPassword">
-
-          <button mat-icon-button
-                  matSuffix
-                  type="button"
-                  (click)="hideConfirmPassword = !hideConfirmPassword">
+          <input
+            matInput
+            [type]="hideConfirmPassword ? 'password' : 'text'"
+            placeholder="Confirm password"
+            formControlName="confirmPassword"
+          />
+          <button
+            mat-icon-button
+            matSuffix
+            type="button"
+            (click)="hideConfirmPassword = !hideConfirmPassword">
             <mat-icon>{{ hideConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
           </button>
         </mat-form-field>
 
+        <div *ngIf="signupForm.errors?.['passwordsMismatch']" class="error-msg">
+  Passwords do not match
+</div>
+
+        <!-- Remember me -->
+        <div class="remember-me">
+          <input type="checkbox" formControlName="rememberMe" />
+          <label>Remember me</label>
+        </div>
+
         <!-- Sign Up Button -->
-        <button mat-raised-button color="primary" class="full-width">
+        <button
+          mat-raised-button
+          color="primary"
+          class="full-width"
+          type="submit"
+          [disabled]="signupForm.invalid">
           Sign Up
         </button>
 
-        <!-- Error -->
-        <div *ngIf="signupForm.errors?.passwordsMismatch" class="error-msg">
-          Passwords do not match
-        </div>
+        <!-- Social Sign Up -->
+        <div class="social-login">
 
-        <!-- Login Link -->
-        <p class="login-text">
-          Already have an account? <a routerLink="/">Log in</a>
-        </p>
+          <!-- Google -->
+          <button mat-stroked-button class="social-btn google" type="button">
+            <svg viewBox="0 0 48 48" class="social-icon">
+              <path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.3 9 3.4l6.7-6.7C35.4 2.4 30 0 24 0 14.6 0 6.5 5.4 2.7 13.3l7.8 6C12.3 13.3 17.7 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.1 24.5c0-1.6-.1-2.7-.4-3.9H24v7.4h12.7c-.6 3-2.4 5.6-5.2 7.3l8 6.2c4.7-4.3 6.6-10.7 6.6-17z"/>
+              <path fill="#FBBC05" d="M10.5 28.5c-.5-1.4-.8-2.8-.8-4.5s.3-3.1.8-4.5l-7.8-6C.9 16.5 0 20.1 0 24s.9 7.5 2.7 10.5l7.8-6z"/>
+              <path fill="#34A853" d="M24 48c6 0 11.1-2 14.8-5.4l-8-6.2c-2.2 1.5-5 2.4-6.8 2.4-6.3 0-11.7-3.8-13.5-9.8l-7.8 6C6.5 42.6 14.6 48 24 48z"/>
+            </svg>
+          </button>
+
+          <!-- Facebook -->
+          <button mat-stroked-button class="social-btn facebook" type="button">
+            <svg viewBox="0 0 24 24" class="social-icon">
+              <path fill="#1877F2"
+                d="M22.675 0h-21.35C.597 0 0 .597 0 1.326v21.348C0 23.403.597 24 1.326 24h11.49v-9.294H9.691V11.01h3.125V8.309c0-3.1 1.894-4.788 4.659-4.788 1.325 0 2.463.099 2.795.143v3.24l-1.918.001c-1.504 0-1.795.715-1.795 1.763v2.313h3.587l-.467 3.696h-3.12V24h6.116C23.403 24 24 23.403 24 22.674V1.326C24 .597 23.403 0 22.675 0z"/>
+            </svg>
+          </button>
+
+        </div>
 
       </form>
     </div>
 
+    <!-- RIGHT PANE -->
     <div class="right-pane">
-      <img src="https://img.freepik.com/premium-photo/happy-young-asian-woman-using-mobile-phone-online-shopping-blue-color-background_41418-4046.jpg" alt="Shopping">
+      <img
+        src="https://img.freepik.com/premium-photo/happy-young-asian-woman-using-mobile-phone-online-shopping-blue-color-background_41418-4046.jpg"
+        alt="Shopping"
+      />
     </div>
+
+  </div>
+
+  <!-- OUTSIDE BOX -->
+  <div class="signin-footer">
+    Already have an account?
+    <a routerLink="/login">Sign in</a>
   </div>
 </div>

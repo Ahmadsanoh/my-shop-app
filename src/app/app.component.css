@@ -14,17 +14,15 @@
   transition: all 0.3s ease;
 }
 
-/* Shrinked header */
 .app-header.shrink {
   padding: 10px 30px;
 }
 
-/* Main content spacing */
 .main-content {
   margin-top: 90px;
 }
 
-/* ===== LOGO ===== */
+/* LOGO */
 .logo-img {
   height: 65px;
   width: 100px;
@@ -35,7 +33,7 @@
   height: 48px;
 }
 
-/* ===== NAV MENU ===== */
+/* NAV MENU */
 .nav-menu {
   display: flex;
   gap: 40px;
@@ -52,14 +50,14 @@
   color: #1976d2;
 }
 
-/* ===== USER ACTIONS ===== */
+/* USER ACTIONS */
 .user-actions {
   display: flex;
   align-items: center;
   gap: 16px;
 }
 
-/* ===== SEARCH ===== */
+/* SEARCH */
 .search-input {
   height: 38px;
   padding: 0 14px;
@@ -67,7 +65,7 @@
   border: 1px solid #ccc;
 }
 
-/* ===== ICON BUTTONS ===== */
+/* ICON BUTTONS */
 .profile-btn,
 .cart-btn {
   background: none;
@@ -77,14 +75,13 @@
   padding: 6px;
 }
 
-/* ✅ SVG ICON FIX (IMPORTANT) */
 .icon-svg {
   width: 28px;
   height: 28px;
   display: block;
 }
 
-/* ===== CART BADGE ===== */
+/* CART BADGE */
 .cart-count {
   position: absolute;
   top: -6px;
@@ -97,12 +94,11 @@
   padding: 2px 6px;
 }
 
-/* ===== PROFILE MENU ===== */
+/* PROFILE MENU */
 .profile-wrapper {
   position: relative;
 }
 
-/* Profile menu hidden by default */
 .profile-menu {
   position: absolute;
   top: 42px;
@@ -111,17 +107,15 @@
   border-radius: 6px;
   box-shadow: 0 2px 10px rgba(0,0,0,0.2);
   min-width: 180px;
-  display: none; /* hidden initially */
+  display: none;
   flex-direction: column;
   z-index: 100;
 }
 
-/* Show profile menu on hover */
 .profile-wrapper:hover .profile-menu {
   display: flex;
 }
 
-/* ===== PROFILE SUBTITLE ===== */
 .profile-subtitle {
   padding: 10px 14px;
   font-weight: bold;
@@ -130,7 +124,6 @@
   cursor: default;
 }
 
-/* ===== PROFILE MENU BUTTONS ===== */
 .profile-menu button {
   padding: 10px 14px;
   border: none;

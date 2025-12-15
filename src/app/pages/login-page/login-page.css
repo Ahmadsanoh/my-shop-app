@@ -60,22 +60,21 @@ input.mat-input-element {
 }
 
 /* =========================
-   SOCIAL LOGIN
+   SOCIAL LOGIN (ONE ROW)
 ========================= */
 .social-login {
   margin-top: 15px;
   display: flex;
-  flex-direction: column;
   gap: 10px;
 }
 
 /* Social buttons */
 button.social-btn {
-  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   font-weight: 500;
   text-transform: none;
 }
@@ -87,9 +86,9 @@ button.social-btn {
   display: block;
 }
 
-/* Optional brand borders */
+/* Brand borders */
 button.social-btn.google {
-  border-color: #ddd;
+  border-color: #1a6d22;
 }
 
 button.social-btn.facebook {
@@ -111,12 +110,6 @@ button.social-btn.facebook {
 
 .signup-link span {
   color: #555;
-}
-
-.signup-btn {
-  text-transform: none;
-  color: #4da1ff;
-  border-color: #4da1ff;
 }
 
 /* =========================

@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { of } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
-import { login, loginSuccess } from './auth.actions';
+import { switchMap, map, catchError } from 'rxjs/operators';
+import { login, loginSuccess, loginFailure } from './auth.actions';
 
 @Injectable()
 export class AuthEffects {
@@ -11,10 +11,15 @@ export class AuthEffects {
   login$ = createEffect(() =>
     this.actions$.pipe(
       ofType(login),
-      switchMap(({ username, password }) => {
-        // Simulate login API call
-        const user = { username }; // dummy user
-        return of(loginSuccess({ user }));
+      switchMap(({ email, password }) => {
+        // Simulate API call
+        const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (savedUser.email === email && savedUser.password === password) {
+          return of(loginSuccess({ user: savedUser }));
+        } else {
+          return of(loginFailure({ error: 'Invalid credentials' }));
+        }
       })
     )
   );

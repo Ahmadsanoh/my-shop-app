@@ -239,13 +239,13 @@ export class LandingPageComponent implements OnInit, OnDestroy {
     {
       title: 'FREE RETURNS',
       subtitle: '30 days return policy',
-      svgPath: 'M12 4V1L8 5l4 4V6a6 6 0 11-6 6'
+      svgPath: 'M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.1-.9 2-2 2h-4v-2h4c2.21 0 4-1.79 4-4s-1.79-4-4-4z'
     },
     {
       title: 'CUSTOMER SUPPORT',
-      subtitle: '24/7 live assistance',
-      svgPath: 'M12 1c-3.86 0-7 3.14-7 7v3H4v6h2v-6h2v6h2v-6h2v6h2v-6h-1V8c0-3.86-3.14-7-7-7z'
-    }
+      subtitle: "24/7 live assistance",
+      svgPath: "M12 2a10 10 0 00-10 10v3a2 2 0 002 2h2v-4h-2v-3a8 8 0 1116 0v3h-2v4h2a2 2 0 002-2v-3a10 10 0 00-10-10zm-1 14h2v2h-2v-2zm0-4h2v3h-2v-3z"
+}
   ];
 
   /* ===== PRODUCTS ===== */

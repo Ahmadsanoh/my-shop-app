@@ -3,7 +3,6 @@
   justify-content: center;
   align-items: center;
   height: 100vh;
-  margin: 0;
   background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
   font-family: 'Roboto', sans-serif;
 }
@@ -13,76 +12,92 @@
   width: 100%;
   max-width: 1000px;
   padding: 20px;
-  box-sizing: border-box;
 }
 
 /* Container */
 .signup-container {
   display: flex;
-  width: 100%;
   height: 70vh;
   border-radius: 12px;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255,255,255,0.85);
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
-  backdrop-filter: blur(4px);
 }
 
-/* Left Pane */
+/* Left pane */
 .left-pane {
   flex: 1;
-  padding: 30px 25px;   /* reduced for more space on top */
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start; /* changed from center */
+  padding: 40px 30px;
 }
 
 .left-pane h2 {
-  margin-top: 5px;
-  margin-bottom: 18px; /* reduced spacing */
-  color: #2c3e50;
-  font-size: 2em;
   text-align: center;
-  font-weight: 700;
+  margin-bottom: 20px;
 }
 
-/* Form Fields */
+/* Form fields */
 mat-form-field {
   width: 100%;
-  margin-bottom: 12px; /* reduced spacing between inputs */
+  margin-bottom: 14px;
 }
 
-input.mat-input-element {
-  color: #000;
-}
-
-/* Submit Button */
-.full-width {
-  width: 100%;
-  margin-top: 3px; /* spacing above button */
-}
-
-/* Error message */
+/* Error */
 .error-msg {
   color: red;
+  font-size: 0.85rem;
   text-align: center;
-  margin-top: 8px;
+  margin-bottom: 10px;
 }
 
-/* Login link */
-.login-text {
-  margin-top: 16px;
+/* Remember me */
+.remember-me {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+/* Buttons */
+.full-width {
+  width: 100%;
+}
+
+/* Social login */
+.social-login {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.social-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  text-transform: none;
+}
+
+.social-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* Footer outside box */
+.signin-footer {
+  color: #ffffff;
+  text-align: center;
+  margin-top: 12px;
   font-size: 0.95rem;
-  text-align: center;
 }
 
-.login-text a {
-  color: #4da1ff;
-  text-decoration: none;
+.signin-footer a {
+  color: #1976d2;
   font-weight: 500;
+  text-decoration: none;
 }
 
-/* Right Pane */
+/* Right pane */
 .right-pane {
   flex: 1;
   display: none;
@@ -92,10 +107,9 @@ input.mat-input-element {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  opacity: 0.85;
 }
 
-/* Desktop view */
+/* Desktop */
 @media (min-width: 768px) {
   .right-pane {
     display: block;

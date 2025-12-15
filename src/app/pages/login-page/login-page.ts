@@ -1,11 +1,13 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { RouterModule, Router } from '@angular/router';
+import { Component } from '@angular/core'
+import { CommonModule } from '@angular/common'
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms'
+import { MatFormFieldModule } from '@angular/material/form-field'
+import { MatInputModule } from '@angular/material/input'
+import { MatButtonModule } from '@angular/material/button'
+import { MatIconModule } from '@angular/material/icon'
+import { RouterModule, Router } from '@angular/router'
+
+import { getAuth, signInWithPopup, GoogleAuthProvider, FacebookAuthProvider } from 'firebase/auth'
 
 @Component({
   selector: 'app-login-page',
@@ -23,43 +25,60 @@ import { RouterModule, Router } from '@angular/router';
   styleUrls: ['./login-page.css']
 })
 export class LoginPageComponent {
-
-  hidePassword = true;
-
-  loginForm: any;
+  hidePassword = true
+  loginForm: any
 
   constructor(private fb: FormBuilder, private router: Router) {
     this.loginForm = this.fb.group({
-      username: ['', [Validators.required, Validators.email]], // email required
-      password: ['', Validators.required] // password required
-    });
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required]
+    })
   }
 
+  // Normal login with registered email/password
   onSubmit() {
     if (this.loginForm.invalid) {
-      this.loginForm.markAllAsTouched();
-      return;
+      this.loginForm.markAllAsTouched()
+      return
     }
 
-    const { username, password } = this.loginForm.value;
-    const savedUser = JSON.parse(localStorage.getItem('user') || '{}');
+    const { email, password } = this.loginForm.value
+    const savedUser = JSON.parse(localStorage.getItem('user') || '{}')
 
-    if (savedUser.username === username && savedUser.password === password) {
-      alert('Login successful!');
-      this.router.navigate(['/home']);
+    if (savedUser.email === email && savedUser.password === password) {
+      alert('Login successful! Welcome back!')
+      localStorage.setItem('access', 'mock-token')
+      this.router.navigate(['/'])
     } else {
-      alert('Invalid username or password');
+      alert('Invalid email or password. Please sign up first.')
     }
   }
 
-  // Dummy social login functions
+  // Google social login
   loginWithGoogle() {
-    alert('Google login clicked!');
-    // Implement real Google OAuth here
+    const auth = getAuth()
+    const provider = new GoogleAuthProvider()
+    signInWithPopup(auth, provider)
+      .then(result => {
+        const user = result.user
+        localStorage.setItem('access', 'mock-token')
+        alert(`Welcome ${user.displayName || user.email}! You are logged in.`)
+        this.router.navigate(['/'])
+      })
+      .catch(err => alert(err.message))
   }
 
+  // Facebook social login
   loginWithFacebook() {
-    alert('Facebook login clicked!');
-    // Implement real Facebook OAuth here
+    const auth = getAuth()
+    const provider = new FacebookAuthProvider()
+    signInWithPopup(auth, provider)
+      .then(result => {
+        const user = result.user
+        localStorage.setItem('access', 'mock-token')
+        alert(`Welcome ${user.displayName || user.email}! You are logged in.`)
+        this.router.navigate(['/'])
+      })
+      .catch(err => alert(err.message))
   }
 }
