@@ -21,14 +21,15 @@ import { FooterComponent } from './shared/footer/footer.component'
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  title = 'My Shop'
   searchQuery = ''
 
-  // Signal to track login status
   isLoggedIn = signal<boolean>(false)
-  showProfileMenuFlag = signal<boolean>(false)
   cart = signal<any[]>(JSON.parse(localStorage.getItem('cart') || '[]'))
+  wishlist = signal<any[]>(JSON.parse(localStorage.getItem('wishlist') || '[]'))
+
   cartCount = computed(() => this.cart().length)
+  wishlistCount = computed(() => this.wishlist().length)
+
   shrinkHeader = signal<boolean>(false)
 
   constructor(private router: Router, private searchService: SearchService) {
@@ -40,50 +41,24 @@ export class AppComponent {
     this.shrinkHeader.set(window.pageYOffset > 50)
   }
 
-  // Check localStorage for login
   checkLoginStatus() {
     const token = localStorage.getItem('access')
     this.isLoggedIn.set(!!token)
   }
 
-  goToLogin() {
-    this.router.navigate(['/login'])
-    this.showProfileMenuFlag.set(false)
-  }
-
-  goToSignup() {
-    this.router.navigate(['/signup'])
-    this.showProfileMenuFlag.set(false)
-  }
-
-  goToProfile() {
-    if (this.isLoggedIn()) this.router.navigate(['/account/profile'])
-    else this.showProfileMenuFlag.set(!this.showProfileMenuFlag())
-  }
-
-  showProfileMenu() {
-    return this.showProfileMenuFlag()
-  }
-
-  goToCart() {
-    this.router.navigate(['/dev/cart'])
-  }
+  goToLogin() { this.router.navigate(['/login']) }
+  goToSignup() { this.router.navigate(['/signup']) }
+  goToCart() { this.router.navigate(['/dev/cart']) }
+  goToWishlist() { this.router.navigate(['/dev/wishlist']) }
 
   onSearch() {
     this.searchService.searchQuery.set(this.searchQuery)
     this.router.navigate(['/dev/products'])
   }
 
-  // ✅ Logout function
   logout() {
     localStorage.removeItem('access')
     this.isLoggedIn.set(false)
-    alert('You have been logged out')
     this.router.navigate(['/login'])
-  }
-
-  // ✅ Call this after login
-  loginSuccess() {
-    this.isLoggedIn.set(true)
   }
 }

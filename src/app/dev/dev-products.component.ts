@@ -1,4 +1,4 @@
-import { Component, signal, computed, Inject } from '@angular/core';
+import { Component, signal, computed, Inject, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -26,7 +26,6 @@ interface Paginated<T> {
   results: T[];
 }
 
-/* PRODUCT DETAILS DIALOG */
 @Component({
   selector: 'product-details-dialog',
   standalone: true,
@@ -42,10 +41,9 @@ interface Paginated<T> {
     </mat-card>
   `,
   styles: [`
-    .dialog-card { padding: 20px; border-radius: 12px; background: rgba(255,255,255,0.9); box-shadow: 0 6px 14px rgba(0,0,0,0.2); backdrop-filter: blur(3px); }
-    .dialog-image { width: 100%; height: 250px; object-fit: cover; border-radius: 10px; margin-bottom: 15px; }
-    .close-btn { background-color: #473ce7ff; color: #fff; font-weight: 600; }
-    .close-btn:hover { background-color: #473ce7ff; }
+    .dialog-card { padding: 20px; border-radius: 12px }
+    .dialog-image { width: 100%; height: 250px; object-fit: cover }
+    .close-btn { background: #473ce7; color: #fff }
   `]
 })
 export class ProductDetailsDialog {
@@ -53,7 +51,6 @@ export class ProductDetailsDialog {
   close() { this.dialog.closeAll(); }
 }
 
-/* MAIN PRODUCTS COMPONENT */
 @Component({
   standalone: true,
   selector: 'app-dev-products',
@@ -70,12 +67,21 @@ export class ProductDetailsDialog {
   ],
   template: `
 <section class="dev-section">
-  <br/><br/><br/><h1 class="section-title">All Products</h1>
 
-  <div class="cart-wishlist-buttons">
+  <h1 class="section-title">All Products</h1>
+
+  <div class="top-buttons">
     <button mat-flat-button (click)="goToCart()">🛒 Cart ({{ cartCount() }})</button>
-    <button mat-flat-button routerLink="/dev/orders">📦 My Orders</button>
+    <button mat-flat-button routerLink="/dev/orders">📦 Orders</button>
     <button mat-flat-button (click)="goToWishlistPage()">❤️ Wishlist ({{ wishlistCount() }})</button>
+  </div>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Min Rating</mat-label>
+      <input matInput type="number" [(ngModel)]="minRating">
+    </mat-form-field>
+    <button mat-flat-button color="primary" (click)="load()">Apply Filter</button>
   </div>
 
   <div *ngIf="loading()" class="loading">
@@ -86,140 +92,161 @@ export class ProductDetailsDialog {
 
   <div class="products-grid">
     <mat-card *ngFor="let p of resp()?.results" class="product-card">
-      <img *ngIf="p.image" [src]="p.image" alt="{{p.name}}" class="product-image">
-      <h3>{{ p.name }}</h3>
-      <p>Price: €{{ p.price }}</p>
-      <p>Created: {{ p.created_at }}</p>
-      <p><strong>Stock:</strong> <span [ngClass]="getStockClass(p.quantity)">{{ p.quantity }}</span></p>
+
+      <div class="image-wrapper">
+        <img *ngIf="p.image" [src]="p.image" class="product-image">
+        <button mat-icon-button class="heart-overlay" (click)="toggleWishlist(p)">
+          {{ isInWishlist(p) ? '❤️' : '🤍' }}
+        </button>
+      </div>
+
+      <div class="product-header">
+        <span class="product-name">{{ p.name }}</span>
+        <span class="product-price">€{{ p.price }}</span>
+      </div>
+
+      <p class="stock">
+        Stock:
+        <span [ngClass]="getStockClass(p.quantity)">{{ p.quantity }}</span>
+      </p>
+
       <p class="stars">
-        <span *ngFor="let s of [1,2,3,4,5]; let i = index" [class.filled]="isStarFilled(i, p.rating || 0)">★</span>
+        <span *ngFor="let s of [1,2,3,4,5]; let i = index"
+              [class.filled]="isStarFilled(i, p.rating || 0)">★</span>
       </p>
 
       <div class="actions">
-        <button mat-flat-button (click)="openDetails(p)">View Details</button>
-        <button mat-flat-button (click)="addToCart(p)" [disabled]="!p.quantity || p.quantity === 0">Add to Cart</button>
-        <!-- WISHLIST BUTTON VISIBLE ONLY FOR OUT-OF-STOCK PRODUCTS -->
-        <button *ngIf="!p.quantity || p.quantity === 0" mat-flat-button color="warn" (click)="addToWishlist(p)">
-          Add to Wishlist
+        <button mat-flat-button (click)="openDetails(p)">Details</button>
+        <button mat-flat-button (click)="addToCart(p)" [disabled]="!p.quantity || p.quantity === 0">
+          Add to Cart
         </button>
       </div>
+
     </mat-card>
   </div>
+
+  <button class="scroll-top" *ngIf="showScrollTop" (click)="scrollToTop()">↑</button>
+
 </section>
   `,
   styles: [`
-.dev-section { max-width: 1100px; margin: auto; padding: 20px; }
-.section-title { font-weight: bold; font-size: 32px; margin-bottom: 20px; } /* Updated title style */
-.cart-wishlist-buttons { display: flex; gap: 15px; margin-bottom: 20px; }
-.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-.product-card { padding: 15px; border-radius: 10px; background: #f5f5f5; }
-.product-image { width: 100%; height: 200px; object-fit: cover; margin-bottom: 10px; }
-.actions { display: flex; gap: 10px; flex-wrap: wrap; }
-.filled { color: gold; }
-.in-stock { color: green; font-weight: bold; }
-.low-stock { color: orange; font-weight: bold; }
-.out-stock { color: red; font-weight: bold; }
-.loading { display: flex; justify-content: center; margin: 20px 0; }
+.dev-section { max-width: 1200px; margin: auto; padding: 120px 20px 40px }
+.section-title { font-size: 32px; font-weight: bold; margin-bottom: 20px }
+.top-buttons { display: flex; gap: 15px; margin-bottom: 20px }
+.filters { display: flex; gap: 15px; align-items: center; margin-bottom: 30px }
+.products-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 25px }
+.product-card { padding: 15px; border-radius: 14px; background: #fff; box-shadow: 0 6px 18px rgba(0,0,0,0.08) }
+.image-wrapper { position: relative }
+.product-image { width: 100%; height: 200px; object-fit: cover; border-radius: 10px }
+.heart-overlay { position: absolute; top: 8px; right: 8px; font-size: 22px; background: #fff; border-radius: 50% }
+.product-header { display: flex; justify-content: space-between; margin-top: 10px }
+.product-name { font-weight: bold }
+.product-price { font-weight: bold; color: #473ce7 }
+.stock { margin: 6px 0 }
+.in-stock { color: green; font-weight: bold }
+.low-stock { color: orange; font-weight: bold }
+.out-stock { color: red; font-weight: bold }
+.stars { color: #ccc; font-size: 18px }
+.stars .filled { color: gold }
+.actions { display: flex; gap: 10px; margin-top: 10px }
+.scroll-top { position: fixed; bottom: 30px; right: 30px; padding: 12px 16px; border-radius: 50%; font-size: 20px; background: #473ce7; color: #fff; border: none; cursor: pointer }
   `]
 })
 export class DevProductsComponent {
+
   readonly resp = signal<Paginated<Product> | null>(null);
   readonly err = signal<string | null>(null);
   readonly loading = signal(false);
 
   readonly cart = signal<Product[]>(JSON.parse(localStorage.getItem('cart') || '[]'));
-  readonly cartCount = computed(() => this.cart().length);
-
   readonly wishlist = signal<Product[]>(JSON.parse(localStorage.getItem('wishlist') || '[]'));
+
+  readonly cartCount = computed(() => this.cart().length);
   readonly wishlistCount = computed(() => this.wishlist().length);
 
   minRating = 0;
-  ordering: '-created_at' | 'created_at' = '-created_at';
+  showScrollTop = false;
 
-  readonly imageLinks: Record<string, string> = {
-    'Tampon Encreur': 'https://cdn.france-tampon.fr/3849-large_default/tampon-personnalise-shiny-printer-r552-10-lignes-52mm.jpg',
-    'Marqueur Effaçable': 'https://m.media-amazon.com/images/I/81WJhUbn+KL.jpg',
-    'Palette Aquarelle': 'https://m.media-amazon.com/images/I/516rLHAitlS._SL500_.jpg',
-    'Pinceau Fin': 'https://m.media-amazon.com/images/I/61qaBYuyqXL.jpg',
-    'Feutres Couleur (Pack x10)': 'https://confetticampus.fr/wp-content/uploads/2022/01/stabilo-pen-68-feutres-de-dessin-x10.jpg',
-    'Stylo Rouge': 'https://dxbyzx5id4chj.cloudfront.net/pub/media/catalog/product/0/0/2/5/0/3/P_2503_1.jpg',
-    'Ruban Adhésif': 'https://content.pearl.fr/media/cache/default/article_ultralarge_high_nocrop/shared/images/articles/N/NX6/ruban-adhesif-50-m-resistant-aux-dechirures-noir-ref_NX6936_2.jpg',
-    'Colle Bâton': 'https://www.consommables.com/20760-thickbox_default/uhu-colle-baton-stic-super-geant-format.jpg',
-    'Trousse Bleue': 'https://confetticampus.fr/wp-content/uploads/2023/03/Naamloos-5-22-1350x1350.jpg',
-    'Feuilles A4': 'https://www.printabout.fr/image/product/1126444/33506/400x400/printabout-premium-a4-papier-1-pak-500-vel.jpg?1684496566',
-    'Bloc Notes': 'https://static.igopromo.com/ish/Images/IGO/490x490/10618000.jpg',
-    'Feutre Noir': 'https://m.media-amazon.com/images/I/81bqtSsY2dL.jpg',
-    'Règle 30cm': 'https://dxbyzx5id4chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/9/9/9/9/9/3/P_999993356_1.jpg',
-    'Crayon HB': 'https://m.media-amazon.com/images/I/71cXzQB1LDL._AC_UF1000,1000_QL80_.jpg',
-    'Classeur Rouge': 'https://dxbyzx5chj.cloudfront.net/pub/media/catalog/product/0/5/3/7/6/5/P_53765_1.jpg',
-    'Cahier A5': 'https://dxbyzx5chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/7/9/1/4/4/5/P_79144594_2.jpg',
-    'Stylo Bleu': 'https://dxbyzx5chj.cloudfront.net/fit-in/815x815/filters:fill(fff)/pub/media/catalog/product/4/0/5/1/8/4/P_405184361_1.jpg'
+  private readonly IMAGE_MAP: Record<number, string> = {
+    1: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    2: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    3: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    4: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    5: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    6: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    7: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    8: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    9: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    10: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    11: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    12: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    13: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    14: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    15: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    16: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    17: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    18: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    19: 'https://m.media-amazon.com/images/I/611qQIAdj-L.jpg',
+    20: 'https://www.montampon.fr/10670-large_default/tampon-encreur-trodat-52045b.jpg'
   };
 
-  constructor(private dialog: MatDialog, private router: Router) { this.load(); }
+  constructor(private dialog: MatDialog, private router: Router) {
+    this.load();
+  }
 
-  openDetails(product: Product) { this.dialog.open(ProductDetailsDialog, { data: product, width: '450px' }); }
+  @HostListener('window:scroll')
+  onScroll() { this.showScrollTop = window.scrollY > 400 }
 
-  isStarFilled(index: number, rating: number) { return index < Math.round(rating); }
+  scrollToTop() { window.scrollTo({ top: 0, behavior: 'smooth' }) }
 
-  getStockClass(quantity: number | undefined) {
-    if (!quantity || quantity === 0) return 'out-stock';
-    if (quantity <= 5) return 'low-stock';
+  openDetails(p: Product) {
+    this.dialog.open(ProductDetailsDialog, { data: p, width: '450px' });
+  }
+
+  isStarFilled(i: number, rating: number) { return i < Math.round(rating) }
+
+  getStockClass(q?: number) {
+    if (!q) return 'out-stock';
+    if (q <= 5) return 'low-stock';
     return 'in-stock';
   }
 
-  addToCart(product: Product) {
-    if (!product.quantity || product.quantity === 0) {
-      alert('Product is out of stock!');
-      return;
-    }
-    const quantity = product.quantity > 0 ? product.quantity : 1;
-    const updatedItems = Array(quantity).fill(product);
-    const updatedCart = [...this.cart(), ...updatedItems];
-    this.cart.set(updatedCart);
-    localStorage.setItem('cart', JSON.stringify(updatedCart));
-    alert(`${product.name} (x${quantity}) added to cart!`);
-    product.quantity = 1;
+  addToCart(p: Product) {
+    if (!p.quantity) return;
+    const updated = [...this.cart(), p];
+    this.cart.set(updated);
+    localStorage.setItem('cart', JSON.stringify(updated));
   }
 
-  /* WISHLIST LOGIC FOR OUT-OF-STOCK PRODUCTS */
-  addToWishlist(product: Product) {
-    const current = this.wishlist();
-    const exists = current.find(p => p.id === product.id);
-    if (!exists) {
-      const updated = [...current, product];
-      this.wishlist.set(updated);
-      localStorage.setItem('wishlist', JSON.stringify(updated));
-    }
-    // Navigate directly to wishlist page
-    this.router.navigate(['/dev/wishlist']);
+  toggleWishlist(p: Product) {
+    const list = this.wishlist();
+    const exists = list.find(x => x.id === p.id);
+    const updated = exists ? list.filter(x => x.id !== p.id) : [...list, p];
+    this.wishlist.set(updated);
+    localStorage.setItem('wishlist', JSON.stringify(updated));
   }
 
-  goToWishlistPage() { this.router.navigate(['/dev/wishlist']); }
-  goToCart() { this.router.navigate(['/dev/cart']); }
+  isInWishlist(p: Product) {
+    return this.wishlist().some(x => x.id === p.id);
+  }
+
+  goToWishlistPage() { this.router.navigate(['/dev/wishlist']) }
+  goToCart() { this.router.navigate(['/dev/cart']) }
 
   async load() {
-    this.err.set(null);
     this.loading.set(true);
-    this.resp.set(null);
-
     try {
-      const res = await fetch(`/api/products/?page_size=1000&min_rating=${this.minRating}&ordering=${this.ordering}`);
-      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-      const data = await res.json() as Paginated<Product>;
-
-      await Promise.all(data.results.map(async p => {
-        try {
-          const r = await fetch(`/api/products/${p.id}/rating/`);
-          p.rating = r.ok ? (await r.json()).avg_rating : 0;
-        } catch { p.rating = 0; }
-
-        if (!p.image) p.image = this.imageLinks[p.name] || `https://picsum.photos/400/200?random=${p.id}`;
-        if (p.quantity === undefined) p.quantity = Math.floor(Math.random() * 10);
+      const res = await fetch(`/api/products/?page_size=1000&min_rating=${this.minRating}`);
+      const data: Paginated<Product> = await res.json();
+      data.results = data.results.map(p => ({
+        ...p,
+        image: p.image || this.IMAGE_MAP[p.id]
       }));
-
       this.resp.set(data);
-    } catch (e: any) { this.err.set(e.message || 'Failed to load.'); }
-    finally { this.loading.set(false); }
+    } catch (e: any) {
+      this.err.set(e.message);
+    } finally {
+      this.loading.set(false);
+    }
   }
 }

@@ -11,47 +11,43 @@
   <nav class="nav-menu">
     <a routerLink="/">Home</a>
     <a routerLink="/dev/products">Shop</a>
-    <a routerLink="/categories">Categories</a>
-    <a routerLink="/contact">Contact</a>
     <a routerLink="/about">About</a>
+    <a routerLink="/contact">Contact</a>
   </nav>
 
-  <!-- USER ACTIONS -->
-  <div class="user-actions">
+  <!-- RIGHT ACTIONS -->
+  <div class="right-actions">
 
-    <!-- Search -->
-    <input type="text" placeholder="Search" class="search-input" [(ngModel)]="searchQuery" (keyup.enter)="onSearch()"/>
+    <!-- SEARCH -->
+    <input
+      type="text"
+      placeholder="Search"
+      class="search-input"
+      [(ngModel)]="searchQuery"
+      (keyup.enter)="onSearch()"
+    />
 
-    <!-- PROFILE -->
-    <div class="profile-wrapper">
-      <button class="profile-btn">
-        <svg class="icon-svg" viewBox="0 0 24 24">
-          <path fill="#1976d2" d="M12 12c2.2 0 4-1.8 4-4s-1.8-4-4-4-4 1.8-4 4 1.8 4 4 4zm0 2c-2.7 0-8 1.3-8 4v2h16v-2c0-2.7-5.3-4-8-4z"/>
-        </svg>
-      </button>
+    <!-- AUTH -->
+    <ng-container *ngIf="!isLoggedIn(); else loggedIn">
+      <a routerLink="/login" class="auth-link">Login</a>
+      <a routerLink="/signup" class="auth-link">Register</a>
+    </ng-container>
 
-      <!-- PROFILE MENU -->
-      <div class="profile-menu">
-        <!-- NOT LOGGED IN -->
-        <ng-container *ngIf="!isLoggedIn(); else loggedInMenu">
-          <button (click)="goToLogin()">Login</button>
-          <button (click)="goToSignup()">Sign Up</button>
-        </ng-container>
+    <ng-template #loggedIn>
+      <a routerLink="/account/profile" class="auth-link">Profile</a>
+      <a (click)="logout()" class="auth-link logout">Logout</a>
+    </ng-template>
 
-        <!-- LOGGED IN -->
-        <ng-template #loggedInMenu>
-          <button routerLink="/account/profile">My Profile</button>
-          <button (click)="logout()" style="color: red;">Logout</button>
-        </ng-template>
-      </div>
-    </div>
+    <!-- WISHLIST -->
+    <button class="icon-btn" (click)="goToWishlist()">
+      ❤️
+      <span class="badge" *ngIf="wishlistCount() > 0">{{ wishlistCount() }}</span>
+    </button>
 
     <!-- CART -->
-    <button class="cart-btn" (click)="goToCart()">
-      <svg class="icon-svg" viewBox="0 0 24 24">
-        <path fill="#1976d2" d="M7 18c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zM6 2h2l3.6 7.6-1.4 2.4c-.2.3-.2.6-.2 1a2 2 0 002 2h12v-2H11.4l.9-1.7L19 4H6z"/>
-      </svg>
-      <span class="cart-count" *ngIf="cartCount() > 0">{{ cartCount() }}</span>
+    <button class="icon-btn" (click)="goToCart()">
+      🛒
+      <span class="badge" *ngIf="cartCount() > 0">{{ cartCount() }}</span>
     </button>
 
   </div>
