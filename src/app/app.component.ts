@@ -33,7 +33,8 @@ export class AppComponent {
   shrinkHeader = signal<boolean>(false)
 
   constructor(private router: Router, private searchService: SearchService) {
-    this.checkLoginStatus()
+    const token = localStorage.getItem('access')
+    this.isLoggedIn.set(!!token)
   }
 
   @HostListener('window:scroll')
@@ -41,20 +42,15 @@ export class AppComponent {
     this.shrinkHeader.set(window.pageYOffset > 50)
   }
 
-  checkLoginStatus() {
-    const token = localStorage.getItem('access')
-    this.isLoggedIn.set(!!token)
-  }
-
-  goToLogin() { this.router.navigate(['/login']) }
-  goToSignup() { this.router.navigate(['/signup']) }
-  goToCart() { this.router.navigate(['/dev/cart']) }
-  goToWishlist() { this.router.navigate(['/dev/wishlist']) }
-
   onSearch() {
     this.searchService.searchQuery.set(this.searchQuery)
     this.router.navigate(['/dev/products'])
   }
+
+  goToCart() { this.router.navigate(['/dev/cart']) }
+  goToWishlist() { this.router.navigate(['/dev/wishlist']) }
+  goToLogin() { this.router.navigate(['/login']) }
+  goToSignup() { this.router.navigate(['/signup']) }
 
   logout() {
     localStorage.removeItem('access')

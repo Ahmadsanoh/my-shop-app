@@ -6,122 +6,137 @@ import { RouterLink } from '@angular/router';
   selector: 'app-dev-index',
   imports: [RouterLink],
   template: `
-<section class="dev-section mx-auto max-w-3xl px-4 py-10 space-y-6">
-  <!-- Header -->
-  <h2 class="dev-title">Dev / MSW — Index</h2>
+<section class="dev-section">
+  <h2 class="dev-title">DEV / MSW — INDEX</h2>
 
-  <!-- API Cards -->
   <div class="cards-container">
-    <button routerLink="/dev/auth" class="api-card auth-card">
-      <h3>Auth</h3>
-      <p>POST /api/auth/token/ (+refresh)</p>
-    </button>
 
-    <button routerLink="/dev/products" class="api-card products-card">
-      <h3>Products</h3>
-      <p>GET /api/products/</p>
-    </button>
+    <a routerLink="/dev/auth" class="api-card auth-card">
+      <h3>AUTH API</h3>
+      <p><strong>POST</strong> /api/auth/token/</p>
+      <p><strong>POST</strong> /api/auth/token/refresh/</p>
+    </a>
 
-    <button routerLink="/dev/products/1/rating" class="api-card rating-card">
-      <h3>Product Rating</h3>
-      <p>GET /api/products/:id/rating/</p>
-    </button>
+    <a routerLink="/dev/products" class="api-card products-card">
+      <h3>PRODUCTS API</h3>
+      <p><strong>GET</strong> /api/products/</p>
+    </a>
+
+    <a routerLink="/dev/products/1/rating" class="api-card rating-card">
+      <h3>RATING API</h3>
+      <p><strong>GET</strong> /api/products/:id/rating/</p>
+    </a>
+
   </div>
 
-  <!-- Back buttons -->
   <div class="back-container">
-    <button routerLink="/" class="back-btn">← Retour login</button>
-    <button routerLink="/home" class="back-btn">← Retour home</button>
+    <a routerLink="/" class="back-btn">← LOGIN</a>
+    <a routerLink="/home" class="back-btn">← HOME</a>
   </div>
 </section>
   `,
   styles: [`
-    :host {
-      display: block;
-      min-height: 100vh;
-      background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
-      padding: 40px 20px;
-      box-sizing: border-box;
-      font-family: 'Arial', sans-serif;
-    }
+/* Prevent header from masking content */
+:host {
+  display: block;
+  min-height: 100vh;
+  padding-top: 130px;
+  background: linear-gradient(135deg, #89f7fe, #66a6ff);
+  box-sizing: border-box;
+}
 
-    .dev-section {
-      background: rgba(255, 255, 255, 0.85);
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-      backdrop-filter: blur(4px);
-      text-align: center;
-    }
+/* Main card container */
+.dev-section {
+  max-width: 960px;
+  margin: auto;
+  background: rgba(255,255,255,0.92);
+  padding: 32px;
+  border-radius: 16px;
+  text-align: center;
+}
 
-    .dev-title {
-      font-size: 2.5em;
-      color: #2c3e50;
-      margin-bottom: 20px;
-    }
+/* Title */
+.dev-title {
+  font-size: 2.4rem;
+  margin-bottom: 32px;
+  color: #2c3e50;
+}
 
-    .cards-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-bottom: 20px;
-    }
+/* Cards layout */
+.cards-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  justify-content: center;
+}
 
-    .api-card {
-      flex: 1 1 200px;
-      max-width: 250px;
-      padding: 20px;
-      border-radius: 12px;
-      color: #fff;
-      font-weight: 600;
-      font-size: 1em;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      text-align: left;
-    }
+/* API cards */
+.api-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 
-    .api-card h3 {
-      margin-bottom: 8px;
-      font-size: 1.2em;
-    }
+  width: 260px;
+  min-height: 140px;
 
-    .auth-card {
-      background: #ffb347;
-    }
-    .auth-card:hover { background: #ff8f00; transform: translateY(-3px); }
+  padding: 22px;
+  border-radius: 14px;
 
-    .products-card {
-      background: #4caf50;
-    }
-    .products-card:hover { background: #388e3c; transform: translateY(-3px); }
+  color: #fff;
+  text-decoration: none;
+  text-align: left;
 
-    .rating-card {
-      background: #2196f3;
-    }
-    .rating-card:hover { background: #1976d2; transform: translateY(-3px); }
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
-    .back-container {
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-    }
+/* Hover effect */
+.api-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0,0,0,0.25);
+}
 
-    .back-btn {
-      background-color: transparent;
-      border: none;
-      color: #2c3e50;
-      font-size: 1em;
-      font-weight: 600;
-      cursor: pointer;
-      text-decoration: underline;
-    }
+/* Card titles */
+.api-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
+}
 
-    .back-btn:hover {
-      color: #34495e;
-    }
+/* Text visibility fix */
+.api-card p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+/* Card colors */
+.auth-card {
+  background: linear-gradient(135deg, #ff9800, #f57c00);
+}
+
+.products-card {
+  background: linear-gradient(135deg, #4caf50, #2e7d32);
+}
+
+.rating-card {
+  background: linear-gradient(135deg, #2196f3, #1565c0);
+}
+
+/* Back buttons */
+.back-container {
+  margin-top: 36px;
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+}
+
+.back-btn {
+  font-weight: 600;
+  color: #2c3e50;
+  text-decoration: underline;
+  cursor: pointer;
+}
   `]
 })
 export class DevIndexComponent {}
