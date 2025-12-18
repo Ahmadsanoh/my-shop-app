@@ -3,7 +3,6 @@ import { LandingPageComponent } from './landing-page.component';
 import { SignupPageComponent } from './signup/signup-page';
 import { LoginPageComponent } from './pages/login-page/login-page';
 import { HomeComponent } from './home.component';
-import { ProductsPageComponent } from './pages/login-page/products-page.component';
 import { DevIndexComponent } from './dev/dev-index.component';
 import { DevAuthComponent } from './dev/dev-auth.component';
 import { DevProductsComponent } from './dev/dev-products.component';
@@ -22,7 +21,6 @@ export const routes: Routes = [
   { path: 'signup', component: SignupPageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'home', component: HomeComponent },
-  { path: 'products', component: ProductsPageComponent },
   { path: 'dev', component: DevIndexComponent },
   { path: 'dev/auth', component: DevAuthComponent },
   { path: 'dev/products', component: DevProductsComponent },
@@ -47,9 +45,12 @@ export const routes: Routes = [
     ]
   },
 
-  // Placeholder route
-  { path: 'app', component: AppPlaceholderComponent },
+  // Lazy load admin module
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin.component').then(m => m.AdminModule)
+  },
 
-  // Wildcard route (keep last)
+  { path: 'app', component: AppPlaceholderComponent },
   { path: '**', redirectTo: '' }
 ];

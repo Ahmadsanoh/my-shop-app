@@ -18,6 +18,7 @@
   <!-- RIGHT : ACTIONS -->
   <div class="header-right">
 
+    <!-- SEARCH -->
     <input
       type="text"
       class="search-input"
@@ -26,6 +27,7 @@
       (keyup.enter)="onSearch()"
     />
 
+    <!-- AUTH LINKS -->
     <ng-container *ngIf="!isLoggedIn(); else logged">
       <a class="auth-link" routerLink="/login">LOGIN</a>
       <a class="auth-link" routerLink="/signup">REGISTER</a>
@@ -34,6 +36,8 @@
     <ng-template #logged>
       <a class="auth-link" routerLink="/account/profile">PROFILE</a>
       <a class="auth-link logout" (click)="logout()">LOGOUT</a>
+      <!-- ADMIN LINK -->
+      <a class="auth-link admin-link" routerLink="/admin">ADMIN</a>
     </ng-template>
 
     <!-- FAVORITES -->
