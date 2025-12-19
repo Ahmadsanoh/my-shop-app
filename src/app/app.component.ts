@@ -24,6 +24,7 @@ export class AppComponent {
   searchQuery = ''
 
   isLoggedIn = signal<boolean>(false)
+  isAdmin = signal<boolean>(false)
   cart = signal<any[]>(JSON.parse(localStorage.getItem('cart') || '[]'))
   wishlist = signal<any[]>(JSON.parse(localStorage.getItem('wishlist') || '[]'))
 
@@ -35,6 +36,7 @@ export class AppComponent {
   constructor(private router: Router, private searchService: SearchService) {
     const token = localStorage.getItem('access')
     this.isLoggedIn.set(!!token)
+    this.isAdmin.set(localStorage.getItem('isAdmin') === 'true')
   }
 
   @HostListener('window:scroll')
@@ -54,7 +56,9 @@ export class AppComponent {
 
   logout() {
     localStorage.removeItem('access')
+    localStorage.removeItem('isAdmin')
     this.isLoggedIn.set(false)
+    this.isAdmin.set(false)
     this.router.navigate(['/login'])
   }
 }

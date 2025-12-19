@@ -3,6 +3,7 @@ import { LandingPageComponent } from './landing-page.component';
 import { SignupPageComponent } from './signup/signup-page';
 import { LoginPageComponent } from './pages/login-page/login-page';
 import { HomeComponent } from './home.component';
+import { ProductsPageComponent } from './pages/login-page/products-page.component';
 import { DevIndexComponent } from './dev/dev-index.component';
 import { DevAuthComponent } from './dev/dev-auth.component';
 import { DevProductsComponent } from './dev/dev-products.component';
@@ -15,12 +16,14 @@ import { ProfilePageComponent } from './pages/account/profile-page/profile-page'
 import { OrdersPageComponent } from './pages/account/orders-page/orders-page';
 import { OrderDetailPageComponent } from './pages/account/order-detail-page/order-detail-page';
 import { AppPlaceholderComponent } from './app-placeholder.component';
+import { AdminDashboardComponent } from './admin-dashboard.component';
 
 export const routes: Routes = [
   { path: '', component: LandingPageComponent, pathMatch: 'full' },
   { path: 'signup', component: SignupPageComponent },
   { path: 'login', component: LoginPageComponent },
   { path: 'home', component: HomeComponent },
+  { path: 'products', component: ProductsPageComponent },
   { path: 'dev', component: DevIndexComponent },
   { path: 'dev/auth', component: DevAuthComponent },
   { path: 'dev/products', component: DevProductsComponent },
@@ -30,6 +33,7 @@ export const routes: Routes = [
   { path: 'dev/checkout', component: DevCheckoutComponent },
   { path: 'dev/orders', component: DevProductsOrderComponent },
   { path: 'dev/wishlist', component: DevProductsWishlistComponent },
+  
   {
     path: 'account',
     component: ProfilePageComponent,
@@ -45,12 +49,12 @@ export const routes: Routes = [
     ]
   },
 
-  // Lazy load admin module
-  {
-    path: 'admin',
-    loadChildren: () => import('./admin.component').then(m => m.AdminModule)
-  },
+  // Admin dashboard route
+  { path: 'admin', component: AdminDashboardComponent },
 
+  // Placeholder route
   { path: 'app', component: AppPlaceholderComponent },
+
+  // Wildcard route
   { path: '**', redirectTo: '' }
 ];

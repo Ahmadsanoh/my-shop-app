@@ -23,7 +23,7 @@
 
 /* LOGO */
 .logo-img {
-  height: 55px;
+  height: 73px;
 }
 
 .app-header.shrink .logo-img {
@@ -42,6 +42,7 @@
   letter-spacing: 1px;
   text-decoration: none;
   color: #333;
+  font-size: 1.05rem;
 }
 
 .nav-menu a:hover {
@@ -52,7 +53,7 @@
 .header-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 40px;
 }
 
 /* SEARCH */
@@ -62,6 +63,7 @@
   border-radius: 20px;
   border: 1px solid #ccc;
   text-transform: uppercase;
+  font-size: 0.95rem; /* slightly larger */
 }
 
 /* AUTH */
@@ -69,10 +71,24 @@
   font-weight: 700;
   text-decoration: none;
   color: #1976d2;
+  font-size: 1rem; /* increased */
 }
 
 .auth-link.logout {
   color: #d32f2f;
+}
+
+/* REGISTER button */
+.auth-link.register {
+  background-color: #1976d2;
+  color: #fff;
+  padding: 6px 14px;
+  border-radius: 20px;
+  transition: background 0.3s;
+}
+
+.auth-link.register:hover {
+  background-color: #115293;
 }
 
 /* ICON BUTTONS */
@@ -86,6 +102,11 @@
 .icon-btn svg {
   width: 26px;
   height: 26px;
+  fill: #1976d2;
+}
+
+/* FAVORITE BUTTON */
+.icon-btn.favorite svg {
   fill: #1976d2;
 }
 

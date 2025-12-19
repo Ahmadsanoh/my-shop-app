@@ -35,7 +35,6 @@ export class LoginPageComponent {
     })
   }
 
-  // Normal login with registered email/password
   onSubmit() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched()
@@ -45,16 +44,25 @@ export class LoginPageComponent {
     const { email, password } = this.loginForm.value
     const savedUser = JSON.parse(localStorage.getItem('user') || '{}')
 
+    if (email === 'admin@gmail.com' && password === 'onlyadmins') {
+      // Admin login
+      localStorage.setItem('access', 'mock-token')
+      localStorage.setItem('isAdmin', 'true')
+      alert('Welcome Admin!')
+      this.router.navigate(['/admin'])
+      return
+    }
+
     if (savedUser.email === email && savedUser.password === password) {
       alert('Login successful! Welcome back!')
       localStorage.setItem('access', 'mock-token')
+      localStorage.removeItem('isAdmin')
       this.router.navigate(['/'])
     } else {
       alert('Invalid email or password. Please sign up first.')
     }
   }
 
-  // Google social login
   loginWithGoogle() {
     const auth = getAuth()
     const provider = new GoogleAuthProvider()
@@ -62,13 +70,13 @@ export class LoginPageComponent {
       .then(result => {
         const user = result.user
         localStorage.setItem('access', 'mock-token')
+        localStorage.removeItem('isAdmin')
         alert(`Welcome ${user.displayName || user.email}! You are logged in.`)
         this.router.navigate(['/'])
       })
       .catch(err => alert(err.message))
   }
 
-  // Facebook social login
   loginWithFacebook() {
     const auth = getAuth()
     const provider = new FacebookAuthProvider()
@@ -76,6 +84,7 @@ export class LoginPageComponent {
       .then(result => {
         const user = result.user
         localStorage.setItem('access', 'mock-token')
+        localStorage.removeItem('isAdmin')
         alert(`Welcome ${user.displayName || user.email}! You are logged in.`)
         this.router.navigate(['/'])
       })
